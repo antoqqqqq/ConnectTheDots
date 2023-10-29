@@ -19,27 +19,36 @@ class Label:
         #Antialias - drawing with smooth edges
         text = font.render(self.text, True, self.color)
         screen.blit(text, (self.x, self.y))
-
-class Button:
-    #scale is the ratio we scale the width and height of the image
-    #width and height are set to the image width, height
+        
+class Sprite:
     def __init__(self, x, y, image_path, width, height):
         #load the image with pygame
         loaded_image = pygame.image.load(image_path).convert_alpha()
         #scale the image to the desired width and height
         self.image = pygame.transform.scale(loaded_image, (width, height))
-        #create a rect to check if button is clicked
-        self.rect = self.image.get_rect()
+        #x and y coordinates
+        self.x = x
+        self.y = y
+
+    def draw(self, screen):
+        screen.blit(self.image, (self.x, self.y))
+
+class Button:
+    #scale is the ratio we scale the width and height of the image
+    #width and height are set to the image width, height
+    def __init__(self, x, y, image_path, width, height):
+        self.sprite = Sprite(x, y, image_path, width, height)
+        #rect is used to check for collision with mouse cursor
+        self.rect = self.sprite.image.get_rect()
         self.rect.topleft = (x, y)
-        #clicked records whether the button is being clicked
+        #record if the Button is being clicked
         self.clicked = False
 
     def draw(self, screen):
-        screen.blit(self.image, (self.rect.x, self.rect.y))
+        self.sprite.draw(screen)
 
     def isClicked(self):
         mouse_pos = pygame.mouse.get_pos()
-
         if self.rect.collidepoint(mouse_pos):
             if (pygame.mouse.get_pressed()[0] == 1 and self.clicked == False):
                 self.clicked = True
