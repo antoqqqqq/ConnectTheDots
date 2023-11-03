@@ -20,32 +20,48 @@ class Label:
         text = font.render(self.text, True, self.color)
         screen.blit(text, (self.x, self.y))
         
-class Sprite:
-    def __init__(self, x, y, image_path, width, height):
+class Sprite(pygame.sprite.Sprite):
+    def __init__(self, x, y, image_path, width = None, height = None, scaler = 1):
+        pygame.sprite.Sprite.__init__(self)
         #load the image with pygame
         loaded_image = pygame.image.load(image_path).convert_alpha()
         #scale the image to the desired width and height
-        self.image = pygame.transform.scale(loaded_image, (width, height))
+        img_width = width
+        img_height = height
+        if(width == None or height == None):
+            img_width = loaded_image.get_width()
+            img_height = loaded_image.get_height()
+        self.image = pygame.transform.scale(loaded_image, (img_width * scaler, img_height * scaler))
         #x and y coordinates
-        self.x = x
-        self.y = y
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
 
-    def draw(self, screen):
-        screen.blit(self.image, (self.x, self.y))
+    # def draw(self, screen):
+    #     screen.blit(self.image, (self.x, self.y))
 
 class Button:
     #scale is the ratio we scale the width and height of the image
     #width and height are set to the image width, height
-    def __init__(self, x, y, image_path, width, height):
-        self.sprite = Sprite(x, y, image_path, width, height)
+    def __init__(self, x, y, image_path, btn_name, width = None, height = None, scaler = 1):
+        #load the image with pygame
+        loaded_image = pygame.image.load(image_path).convert_alpha()
+        #scale the image to the desired width and height
+        img_width = width
+        img_height = height
+        if(width == None or height == None):
+            img_width = loaded_image.get_width()
+            img_height = loaded_image.get_height()
+            
+        self.image = pygame.transform.scale(loaded_image, (img_width * scaler, img_height  * scaler))
         #rect is used to check for collision with mouse cursor
-        self.rect = self.sprite.image.get_rect()
+        self.rect = self.image.get_rect()
         self.rect.topleft = (x, y)
+        self.name = btn_name
         #record if the Button is being clicked
         self.clicked = False
 
     def draw(self, screen):
-        self.sprite.draw(screen)
+        screen.blit(self.image, self.rect.topleft)
 
     def isClicked(self):
         mouse_pos = pygame.mouse.get_pos()

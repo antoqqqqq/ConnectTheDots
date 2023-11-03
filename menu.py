@@ -1,4 +1,5 @@
 import pygame
+from sprite import *
 
 class GameMenu:
     def __init__(self, setting_option, stage_number):
@@ -7,16 +8,27 @@ class GameMenu:
         self.background_color = (22, 72, 99)
         self.stage_number = stage_number
         #self.board = self.create_game(stage_number)
-        self.button_list = []
-        self.sprite_list = []
-
         #pygame variables
         pygame.init()
         #screen to draw 
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption("Connect the Dots")
         self.clock = pygame.time.Clock()
+        self.init_all_sprites()
+        self.button_list = []
+        self.init_all_buttons()
 
+    def init_all_buttons(self):        
+        self.button_list.append(Button(100, 650, "resources/images/home_btn_pink.png", "Home", 75, 75))
+        self.button_list.append(Button(225, 650, "resources/images/reset_btn.png", "Reset", 75, 75))
+    def init_all_sprites(self):
+        self.sprite_list = pygame.sprite.Group()
+        self.sprite_list.add(Sprite(0, 0, "resources/images/background.jpg", self.width, self.height))
+        self.sprite_list.add(Sprite(50, 50, "resources/images/green_box.png", 300, 250))
+        self.sprite_list.add(Sprite(75, 325, "resources/images/pink_box.png", 250, 75))
+        self.sprite_list.add(Sprite(75, 425, "resources/images/pink_box.png", 250, 75))
+        self.sprite_list.add(Sprite(75, 525, "resources/images/pink_box.png", 250, 75))
+        
     def get_setting_config(self, setting_option):
         width = 1200
         height = 800
@@ -31,9 +43,6 @@ class GameMenu:
             pass
 
         return width, height, board_width, board_height
-
-    def draw(self):
-        pass
 
     def get_mouse_pos(self):
         x, y = pygame.mouse.get_pos()
@@ -58,9 +67,15 @@ class GameMenu:
 
     def update(self):
         pass
+    
+    def draw_board(self):
+        pass
 
     def draw(self):
         self.screen.fill(self.background_color)
+        self.sprite_list.draw(self.screen)
+        for button in self.button_list:
+            button.draw(self.screen)
         pygame.display.flip()
 
     def run(self):
@@ -71,5 +86,4 @@ class GameMenu:
             self.update()
             self.draw()
 
-gameMenu = GameMenu(0, 0)
-gameMenu.run()
+
