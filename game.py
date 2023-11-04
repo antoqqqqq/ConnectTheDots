@@ -1,4 +1,4 @@
 from menu import *
 
-gameMenu = GameMenu(0, 0)
-gameMenu.run()
+StageMenu = StageMenu(0)
+StageMenu.run()

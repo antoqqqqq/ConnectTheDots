@@ -121,7 +121,7 @@ class StageMenu:
     def __init__(self, setting_option):
         self.setting_option = setting_option
         self.width, self.height, self.board_width, self.board_height = self.get_setting_config(setting_option)
-        self.background_color = (22, 72, 99)
+        self.background_color = (225, 255, 255)
 
         #pygame variables
         pygame.init()
@@ -152,10 +152,36 @@ class StageMenu:
         return width, height, board_width, board_height
 
     def init_all_buttons(self):        
-        self.button_list.append(Button(75, 487, "resources/images/level_1.png", "Home", 100, 60))
+        #self.button_list.append(Button(75, 487, "resources/images/level_1.png", "Home", 100, 60))
+        #self.button_list.append(Button(39,157,"resources/images/Beginer.jpg","Home",100,60))
+        #self.button_list.append(Button(39,298,"resources/images/Beginer.jpg","Home",100,60))
+        #self.button_list.append(Button(39,452,"resources/images/Beginer.jpg","Home",100,60))
+        self.button_list.append(Button(91,  240, "resources/images/level_1.png", "Home", 54, 37))
+        self.button_list.append(Button(228, 240, "resources/images/level_1.png", "Home", 54, 37))
+        self.button_list.append(Button(365, 240, "resources/images/level_1.png", "Home", 54, 37))
+        self.button_list.append(Button(502, 240, "resources/images/level_1.png", "Home", 54, 37))
+        self.button_list.append(Button(639, 240, "resources/images/level_1.png", "Home", 54, 37))
+        self.button_list.append(Button(776, 240, "resources/images/level_1.png", "Home", 54, 37))
+    
+        self.button_list.append(Button(91,  388, "resources/images/level_1.png", "Home", 54, 37))
+        self.button_list.append(Button(228, 388, "resources/images/level_1.png", "Home", 54, 37))
+        self.button_list.append(Button(365, 388, "resources/images/level_1.png", "Home", 54, 37))
+        self.button_list.append(Button(502, 388, "resources/images/level_1.png", "Home", 54, 37))
+        self.button_list.append(Button(639, 388, "resources/images/level_1.png", "Home", 54, 37))
+        self.button_list.append(Button(776, 388, "resources/images/level_1.png", "Home", 54, 37))
+
+        self.button_list.append(Button(91, 518, "resources/images/level_1.png", "Home", 54, 37))
+        self.button_list.append(Button(228, 518, "resources/images/level_1.png", "Home", 54, 37))
+        self.button_list.append(Button(365, 518, "resources/images/level_1.png", "Home", 54, 37))
+        self.button_list.append(Button(502, 518, "resources/images/level_1.png", "Home", 54, 37))
+        self.button_list.append(Button(639, 518, "resources/images/level_1.png", "Home", 54, 37))
+        self.button_list.append(Button(776, 518, "resources/images/level_1.png", "Home", 54, 37))
+        pass
     def init_all_sprites(self):
         self.sprite_list = pygame.sprite.Group()
-
+        self.sprite_list.add(Sprite(39, 157, "resources/images/Beginer.jpg", 100, 60))
+        self.sprite_list.add(Sprite(39, 298, "resources/images/Beginer.jpg", 100, 60))
+        self.sprite_list.add(Sprite(39, 452, "resources/images/Beginer.jpg", 100, 60))
     def get_mouse_pos(self):
         x, y = pygame.mouse.get_pos()
         return x, y  
@@ -182,7 +208,7 @@ class StageMenu:
     def update(self):
         pass
     def draw_labels(self):
-        Label(225, 100, "Stage Menu", font_size= 80, color = (255, 145, 48)).draw(self.screen)
+        Label(250, 59, "Stage Menu", font_size= 80, color = (255, 145, 48)).draw(self.screen)
 
     def draw(self):
         self.screen.fill(self.background_color)
