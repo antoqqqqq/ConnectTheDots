@@ -1,5 +1,6 @@
 import pygame
 from sprite import *
+from business import *
 
 class GameMenu:
     def __init__(self, setting_option, stage_number):
@@ -7,7 +8,7 @@ class GameMenu:
         self.width, self.height, self.board_width, self.board_height = self.get_setting_config(setting_option)
         self.background_color = (22, 72, 99)
         self.stage_number = stage_number
-        #self.board = self.create_game(stage_number)
+        self.board = self.create_game(stage_number)
         #pygame variables
         pygame.init()
         #screen to draw 
@@ -28,7 +29,7 @@ class GameMenu:
         self.sprite_list.add(Sprite(56, 243, "resources/images/pink_box.png", 187, 56))
         self.sprite_list.add(Sprite(56, 318, "resources/images/pink_box.png", 187, 56))
         self.sprite_list.add(Sprite(56, 393, "resources/images/pink_box.png", 187, 56))
-        
+ 
     def get_setting_config(self, setting_option):
         width = 900
         height = 600
@@ -41,7 +42,7 @@ class GameMenu:
             pass
         elif(setting_option == 3):
             pass
-
+        
         return width, height, board_width, board_height
 
     def get_mouse_pos(self):
@@ -49,7 +50,11 @@ class GameMenu:
         return x, y
     
     def create_game(self, stage_number):
-        pass
+        tiles_with_dot = []
+        tiles_with_dot.append(((0,0), (1,2), "RED"))
+        tiles_with_dot.append(((2,0), (2,2), "YELLOW"))
+        new_board = Board(3,3,25,10, tiles_with_dot)
+        return new_board
 
     def save_score(self, file_path):
         pass
@@ -86,4 +91,5 @@ class GameMenu:
             self.update()
             self.draw()
 
-
+game = GameMenu(0, 0)
+print("")
