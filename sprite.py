@@ -72,4 +72,7 @@ class Button:
             if(pygame.mouse.get_pressed()[0] == 0):
                 self.clicked = False
         return False
+    
+    def getName(self):
+        return self.name
             
