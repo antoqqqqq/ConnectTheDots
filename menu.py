@@ -29,6 +29,7 @@ class GameMenu:
         self.sprite_list.add(Sprite(56, 318, "resources/images/pink_box.png", 187, 56))
         self.sprite_list.add(Sprite(56, 393, "resources/images/pink_box.png", 187, 56))
         
+        
     def get_setting_config(self, setting_option):
         width = 900
         height = 600
@@ -137,9 +138,19 @@ class StageMenu:
                 pygame.quit()
                 quit(0)
 
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                clicked_btn_name = ""
+                for button in self.button_list:
+                    if(button.isClicked()):
+                        clicked_btn_name = button.getName()
+                
+                if(clicked_btn_name == "Home"):
+                    stageMenu = StageMenu(0)
+                    StageMenu.run()
+
+
     def update(self):
         pass
-
     def draw_labels(self):
         Label(225, 100, "Stage Menu", font_size= 80, color = (255, 145, 48)).draw(self.screen)
 
@@ -159,6 +170,3 @@ class StageMenu:
             self.event()
             self.update()
             self.draw()
-
-stageMenu = StageMenu(0)
-stageMenu.run()
