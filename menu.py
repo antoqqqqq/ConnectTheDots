@@ -19,19 +19,19 @@ class GameMenu:
         self.init_all_buttons()
 
     def init_all_buttons(self):        
-        self.button_list.append(Button(100, 650, "resources/images/home_btn_pink.png", "Home", 75, 75))
-        self.button_list.append(Button(225, 650, "resources/images/reset_btn.png", "Reset", 75, 75))
+        self.button_list.append(Button(75, 487, "resources/images/home_btn_pink.png", "Home", 56, 56))
+        self.button_list.append(Button(168, 487, "resources/images/reset_btn.png", "Reset", 56, 56))
     def init_all_sprites(self):
         self.sprite_list = pygame.sprite.Group()
         self.sprite_list.add(Sprite(0, 0, "resources/images/background.jpg", self.width, self.height))
-        self.sprite_list.add(Sprite(50, 50, "resources/images/green_box.png", 300, 250))
-        self.sprite_list.add(Sprite(75, 325, "resources/images/pink_box.png", 250, 75))
-        self.sprite_list.add(Sprite(75, 425, "resources/images/pink_box.png", 250, 75))
-        self.sprite_list.add(Sprite(75, 525, "resources/images/pink_box.png", 250, 75))
+        self.sprite_list.add(Sprite(37, 37, "resources/images/green_box.png", 225, 187))
+        self.sprite_list.add(Sprite(56, 243, "resources/images/pink_box.png", 187, 56))
+        self.sprite_list.add(Sprite(56, 318, "resources/images/pink_box.png", 187, 56))
+        self.sprite_list.add(Sprite(56, 393, "resources/images/pink_box.png", 187, 56))
         
     def get_setting_config(self, setting_option):
-        width = 1200
-        height = 800
+        width = 900
+        height = 600
         board_width = 500
         board_height = 500
 
