@@ -18,12 +18,13 @@ class Tile:
         pass
 
 class Board:
-    def __init__(self, n_rowTiles, n_colTiles, tile_length , dot_radius, tiles_with_dot):
-        self.n_rowTiles = n_rowTiles
-        self.n_colTiles = n_colTiles
+    def __init__(self, n_tiles_perRow, tile_length , dot_radius, tiles_with_dot):
+        self.n_tiles_perRow = n_tiles_perRow
+        self.tile_length = tile_length
+        self.dot_radius = dot_radius
         self.tiles = []
-        for i in range(self.n_rowTiles):
-            for j in range(self.n_colTiles):
+        for i in range(self.n_tiles_perRow):
+            for j in range(self.n_tiles_perRow):
                 new_tile = Tile(None, None)
                 for pos1, pos2, color in tiles_with_dot:
                     if (i, j) == pos1 or (i, j) == pos2:

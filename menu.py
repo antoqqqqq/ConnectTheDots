@@ -1,6 +1,7 @@
 import pygame
 from sprite import *
 from business import *
+from enumaration import *
 
 class GameMenu:
     def __init__(self, setting_option, stage_number):
@@ -8,6 +9,7 @@ class GameMenu:
         self.width, self.height, self.board_width, self.board_height = self.get_setting_config(setting_option)
         self.background_color = (22, 72, 99)
         self.stage_number = stage_number
+        self.board_length = 500
         self.board = self.create_game(stage_number)
         #pygame variables
         pygame.init()
@@ -50,10 +52,14 @@ class GameMenu:
         return x, y
     
     def create_game(self, stage_number):
+        n_tiles_perRow = 5
+        tile_length = self.board_length / n_tiles_perRow
+        dot_radius = int(tile_length * 0.8)
         tiles_with_dot = []
         tiles_with_dot.append(((0,0), (1,2), "RED"))
         tiles_with_dot.append(((2,0), (2,2), "YELLOW"))
-        new_board = Board(3,3,25,10, tiles_with_dot)
+
+        new_board = Board(n_tiles_perRow, tile_length, dot_radius, tiles_with_dot)
         return new_board
 
     def save_score(self, file_path):
@@ -74,13 +80,33 @@ class GameMenu:
         pass
     
     def draw_board(self):
-        pass
+        x_start, y_start = 350, 37
+        board_length = self.board_length
+        tile_length = self.board.tile_length
+
+        #draw the the Board's top and left sides
+        pygame.draw.line(self.screen, Color.BLACK.value, (x_start, y_start), (x_start + board_length, y_start), width=3)
+        pygame.draw.line(self.screen, Color.BLACK.value, (x_start, y_start), (x_start, y_start + board_length), width=3)
+
+        y = y_start
+        
+        for r in range(self.board.n_tiles_perRow):
+            x = x_start
+            y += tile_length
+            for c in range(self.board.n_tiles_perRow):
+                x += tile_length
+                pygame.draw.line(self.screen, Color.BLACK.value, (x, y - tile_length), (x, y), width=3)
+                pygame.draw.line(self.screen, Color.BLACK.value, (x - tile_length, y), (x, y), width=3)
+            
+                
+
 
     def draw(self):
         self.screen.fill(self.background_color)
         self.sprite_list.draw(self.screen)
         for button in self.button_list:
             button.draw(self.screen)
+        self.draw_board()
         pygame.display.flip()
 
     def run(self):
