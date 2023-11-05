@@ -1,4 +1,5 @@
 import pygame
+from data import *
 from sprite import *
 from business import *
 from enumaration import *
@@ -84,10 +85,26 @@ class GameMenu:
         return new_board
 
     def save_score(self, file_path):
-        pass
+        data=[]
+        data= readfile(file_path)
+        i=0
+        for row in data:
+            if (self.stage_number == row[0] and self.num_moves<=row[1] and self.num_turn<=row[2] and self.num_time<=row[3]):
+                write_file(file_path,str(self.stage_number)+"-"+str(self.num_moves)+"-"+str(self.num_turn)+"-"+str(self.num_time))                           
+                break
+            i=+1        
 
     def get_score(self, file_path):
-        pass
+        data=[]
+        data= readfile(file_path)
+        i=0
+        for row in data:
+            if (self.stage_number == row[0]):
+                self.num_moves = data[i][1]
+                self.num_turn  = data[i][2]
+                self.num_time  = data[i][3]
+                break
+            i=+1
 
     def cursor_in_Board(self, mouse_x, mouse_y) -> bool:
         if (mouse_x >= self.board_topLeft[0] and mouse_x < self.board_topLeft[0] + self.board_length 
