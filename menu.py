@@ -52,14 +52,31 @@ class GameMenu:
         return x, y
     
     def create_game(self, stage_number):
-        n_tiles_perRow = 5
+        n_tiles_perRow = 6
         tile_length = self.board_length / n_tiles_perRow
-        dot_radius = int(tile_length * 0.8)
+        dot_radius = int(tile_length * 0.3)
         tiles_with_dot = []
-        tiles_with_dot.append(((0,0), (1,2), "RED"))
-        tiles_with_dot.append(((2,0), (2,2), "YELLOW"))
+        tiles_with_dot.append(((0,0), (1,2), Color.RED.value))
+        tiles_with_dot.append(((2,0), (2,2), Color.YELLOW.value))
 
         new_board = Board(n_tiles_perRow, tile_length, dot_radius, tiles_with_dot)
+        new_board.setTileLineDir(0, 0, Direction.Right.value)
+        new_board.setTileLineDir(0, 1, Direction.Down.value, Direction.Left.value)
+        new_board.setTileLineDir(1, 1, Direction.Right.value, Direction.Up.value)
+        new_board.setTileLineDir(1, 2, Direction.Left.value)
+
+        new_board.setTileLineColor(0, 0, Color.RED.value)
+        new_board.setTileLineColor(0, 1, Color.RED.value)
+        new_board.setTileLineColor(1, 1, Color.RED.value)
+        new_board.setTileLineColor(1, 2, Color.RED.value)
+
+        new_board.setTileLineDir(2, 0, Direction.Right.value)
+        new_board.setTileLineDir(2, 1, Direction.Right.value, Direction.Left.value)
+        new_board.setTileLineDir(2, 2, Direction.Left.value)
+
+        new_board.setTileLineColor(2, 0, Color.YELLOW.value) 
+        new_board.setTileLineColor(2, 1, Color.YELLOW.value) 
+        new_board.setTileLineColor(2, 2, Color.YELLOW.value) 
         return new_board
 
     def save_score(self, file_path):
@@ -83,10 +100,13 @@ class GameMenu:
         x_start, y_start = 350, 37
         board_length = self.board_length
         tile_length = self.board.tile_length
+        border_width = 5
+        rect_length = tile_length * 0.5
+
 
         #draw the the Board's top and left sides
-        pygame.draw.line(self.screen, Color.BLACK.value, (x_start, y_start), (x_start + board_length, y_start), width=3)
-        pygame.draw.line(self.screen, Color.BLACK.value, (x_start, y_start), (x_start, y_start + board_length), width=3)
+        pygame.draw.line(self.screen, Color.BLACK.value, (x_start, y_start), (x_start + board_length, y_start), width=border_width)
+        pygame.draw.line(self.screen, Color.BLACK.value, (x_start, y_start), (x_start, y_start + board_length), width=border_width)
 
         y = y_start
         
@@ -95,8 +115,36 @@ class GameMenu:
             y += tile_length
             for c in range(self.board.n_tiles_perRow):
                 x += tile_length
-                pygame.draw.line(self.screen, Color.BLACK.value, (x, y - tile_length), (x, y), width=3)
-                pygame.draw.line(self.screen, Color.BLACK.value, (x - tile_length, y), (x, y), width=3)
+                #draw Tiles right and bottom sides
+                pygame.draw.line(self.screen, Color.BLACK.value, (x, y - tile_length), (x, y), width=border_width)
+                pygame.draw.line(self.screen, Color.BLACK.value, (x - tile_length, y), (x, y), width=border_width)
+
+                #draw Dot
+                if(self.board.getTileDot(r, c) != None):
+                    pygame.draw.circle(self.screen, self.board.getTileDot(r, c).color, (x - tile_length/2, y - tile_length/2), self.board.dot_radius, width = 0)
+
+                #draw Line
+                if self.board.containsLine(r, c):
+                    enter_dir, exit_dir, line_color = self.board.getTileLineDir_LineColor(r, c)
+                    if(enter_dir != None):
+                        rect_x = x + (enter_dir[0] * tile_length)
+                        rect_y = y + (enter_dir[1] * tile_length)
+                        rect_width = rect_length
+                        rect_height = rect_length
+                        pygame.draw.rect(self.screen, line_color, [rect_x, rect_y, rect_width, rect_height])
+                        pygame.draw.circle(self.screen, line_color, (x - tile_length * 0.5, y - tile_length * 0.5), rect_length / 2)
+                        
+                    
+                    rect_x = x + (exit_dir[0] * tile_length)
+                    rect_y = y + (exit_dir[1] * tile_length)
+                    rect_width = rect_length
+                    rect_height = rect_length
+
+                    if(exit_dir == Direction.Up.value or exit_dir == Direction.Down.value):
+                        rect_height += 5
+                    elif(exit_dir == Direction.Left.value or exit_dir == Direction.Right.value):
+                        rect_width += 5
+                    pygame.draw.rect(self.screen, line_color, [rect_x, rect_y, rect_width, rect_height])
             
                 
 
@@ -125,9 +173,6 @@ class StageMenu:
 
         #pygame variables
         pygame.init()
-        self.screen = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption("Connect the Dots")
-        #screen to draw 
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption("Connect the Dots")
         self.clock = pygame.time.Clock()
@@ -179,7 +224,7 @@ class StageMenu:
         pass
     def init_all_sprites(self):
         self.sprite_list = pygame.sprite.Group()
-        self.sprite_list.add(Sprite(39, 157, "resources/images/Beginer.jpg", 100, 60))
+        self.sprite_list.add(Sprite(39, 157, "resources/images/Beginer.jpg", scaler=0.5))
         self.sprite_list.add(Sprite(39, 298, "resources/images/Beginer.jpg", 100, 60))
         self.sprite_list.add(Sprite(39, 452, "resources/images/Beginer.jpg", 100, 60))
     def get_mouse_pos(self):
