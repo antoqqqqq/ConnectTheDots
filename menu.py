@@ -1,5 +1,6 @@
 import pygame
 from sprite import *
+from data import *
 from business import *
 from enumaration import *
 
@@ -80,7 +81,8 @@ class GameMenu:
         return new_board
 
     def save_score(self, file_path):
-        pass
+
+        write_file(file_path,self.stage_number+"-"+"-"+self.clock)
 
     def get_score(self, file_path):
         pass

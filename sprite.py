@@ -75,4 +75,3 @@ class Button:
     
     def getName(self):
         return self.name
-            
