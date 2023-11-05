@@ -40,6 +40,16 @@ class Board:
     def getTileFromMousePos(self, mousePos: Tuple[int, int]) -> Tile:
         pass
     
+    def setTile(self, row, col, direction, assigned_dir = "Enter", line_color = None):
+        if assigned_dir == "Enter": 
+            self.tiles[row * self.n_tiles_perRow + col].line_enter_direction = direction
+        elif assigned_dir == "Exit":
+            self.tiles[row * self.n_tiles_perRow + col].line_exit_direction = direction
+        self.tiles[row * self.n_tiles_perRow + col].line_color = line_color
+        
+        
+        
+
     def setTileLineDir(self, row, col, exit_dir, enter_dir = None):
         self.tiles[row * self.n_tiles_perRow + col].line_enter_direction = enter_dir
         self.tiles[row * self.n_tiles_perRow + col].line_exit_direction = exit_dir
@@ -51,7 +61,7 @@ class Board:
         return enter_dir, exit_dir, line_color
 
     def containsLine(self, row, col) -> bool:
-        return self.tiles[row * self.n_tiles_perRow + col].line_exit_direction != None
+        return self.tiles[row * self.n_tiles_perRow + col].line_exit_direction != None or self.tiles[row * self.n_tiles_perRow + col].line_enter_direction != None
 
     def setTileLineColor(self, row, col, color):
         self.tiles[row * self.n_tiles_perRow + col].line_color = color
