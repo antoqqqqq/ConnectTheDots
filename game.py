@@ -1,4 +1,7 @@
 from menu import *
 
-StageMenu = StageMenu(0)
-StageMenu.run()
+gameMenu = GameMenu(0,0)
+gameMenu.run()
+
+# stageMenu = StageMenu(0)
+# stageMenu.run()

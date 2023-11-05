@@ -1,9 +1,9 @@
 from enum import Enum
 class Direction(Enum):
-    Right ={0,1}
-    Left ={0,-1}
-    Up ={1,0}
-    Down ={-1,0}
+    Right =[-0.5, -0.75]
+    Left =[-1, -0.75]
+    Up =[-0.75, -1]
+    Down =[-0.75, -0.5]
     # def __init__(self, value):
     #     self.value = value
 class Color(Enum):
