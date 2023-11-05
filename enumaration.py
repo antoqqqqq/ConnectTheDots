@@ -4,8 +4,13 @@ class Direction(Enum):
     Left =[-1, -0.75]
     Up =[-0.75, -1]
     Down =[-0.75, -0.5]
-    # def __init__(self, value):
-    #     self.value = value
+
+# class Move(Enum):
+#     Right = (0, 1)
+#     Left = (0, -1)
+#     Up = (-1, 0)
+#     Down = (1, 0)
+    
 class Color(Enum):
     RED = (255,0,0)
     GREEN = (0,255,0)
@@ -17,6 +22,3 @@ class Color(Enum):
     SILVER =(192,192,192)
     DEEPPINK =(255,20,147)
     ORANGE =(255,165,0)
-
-    # def __init__(self, value):
-    #     self.value = value

@@ -32,9 +32,3 @@ def write_file(filename,text):
                 f.write(row[0]+'-'+row[1]+'-'+row[2]+'-'+row[3]+'\n')
     except IOError:
         print("Error: could not write file " + filename)
-a=1
-b=2
-c=2
-d=3
-e=str(a)+"-"+str(b)+"-"+str(c)+"-"+str(d)
-write_file('file_save_stage.txt',e)
