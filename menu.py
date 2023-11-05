@@ -1,5 +1,6 @@
 import pygame
 from sprite import *
+from data import *
 
 class GameMenu:
     def __init__(self, setting_option, stage_number):
@@ -52,7 +53,8 @@ class GameMenu:
         pass
 
     def save_score(self, file_path):
-        pass
+
+        write_file(file_path,self.stage_number+"-"+"-"+self.clock)
 
     def get_score(self, file_path):
         pass
@@ -85,5 +87,3 @@ class GameMenu:
             self.event()
             self.update()
             self.draw()
-
-
