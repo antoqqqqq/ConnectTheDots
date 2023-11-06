@@ -349,7 +349,7 @@ class StageMenu:
 
     def init_all_sprites(self):
         self.sprite_list = pygame.sprite.Group()
-        self.sprite_list.add(Sprite(0, 0, "resources/images/background3.jpg", self.width, self.height))
+        self.sprite_list.add(Sprite(0, 0, "resources/images/background2.jpg", self.width, self.height))
         self.sprite_list.add(Sprite(32, 85, "resources/images/BASIC.png", scaler=0.5))
         self.sprite_list.add(Sprite(39, 258, "resources/images/SPECIAL.png", scaler=0.5))
         self.sprite_list.add(Sprite(39, 430, "resources/images/DAILY.png", scaler=0.5))
