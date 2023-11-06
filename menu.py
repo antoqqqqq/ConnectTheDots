@@ -163,6 +163,18 @@ class GameMenu:
         elif(r_dif, c_dif) == (-1, 0):
             return "Up"
     
+    def getMoveValue(self, move: str):
+        r = 0
+        c = 0
+        if(move == "Right"):
+            c = 1
+        elif(move == "Left"):
+            c = -1
+        elif(move == "Up"):
+            r = -1
+        elif(move == "Down"):
+            r = 1
+        return r, c
     def processPressedTile(self, pressedTile_pos):
         if(pressedTile_pos == None):
             return
@@ -214,8 +226,21 @@ class GameMenu:
                                Direction[current_to_previous_Enterdirection].value, assigned_dir="Enter",
                                line_color=self.current_held_color)
             return
-        # if(pressedTile_pos == self.previous_passed_tile_rc):
-        #     self.board.setTile(self.previous)
+        
+        if(pressedTile_pos == self.previous_passed_tile_rc):
+            self.board.setTileEnterDir(self.current_held_tile_rc[0], self.current_held_tile_rc[1], None)
+            self.board.setTileLineColor(self.current_held_tile_rc[0], self.current_held_tile_rc[1], None)
+            self.board.setTileExitDir(self.previous_passed_tile_rc[0], self.previous_passed_tile_rc[1], None)
+
+            self.current_held_tile_rc = pressedTile_pos
+            previous_enter_dir, previous_exit_dir = self.board.getTileLineDir(self.previous_passed_tile_rc[0], self.previous_passed_tile_rc[1])
+            if(previous_enter_dir == None):
+                self.previous_passed_tile_rc = None
+                return
+            rol_offset, col_offset = self.getMoveValue(Direction(previous_enter_dir).name)
+            self.previous_passed_tile_rc[0] += rol_offset
+            self.previous_passed_tile_rc[1] += col_offset
+            return
 
     def update(self):
         if self.is_connecting_dot:
