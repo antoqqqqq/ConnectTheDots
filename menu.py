@@ -13,7 +13,7 @@ class GameMenu:
         self.board_border = 5
         self.board = self.create_game(stage_number)
 
-        #variables for processing user mouse inputs on board
+        #variables for processing user mouse inputs on board    
         self.is_connecting_dot = False
         self.previous_passed_tile_rc = None
         self.current_held_tile_rc = None
@@ -60,13 +60,17 @@ class GameMenu:
         return x, y
     
     def create_game(self, stage_number):
-        n_tiles_perRow = 5
+        #info_stage=[int(stage),int(n_tiles_perRow),int(number_node),tiles_with_dot]
+        info_stage=read_stage('level'+str(stage_number)+'.txt')        
+        n_tiles_perRow=info_stage[1]
         tile_length = self.board_length / n_tiles_perRow
         dot_radius = int(tile_length * 0.3)
-        tiles_with_dot = []
-        tiles_with_dot.append(((0,0), (1,2), Color.RED.value))
-        tiles_with_dot.append(((2,0), (2,2), Color.YELLOW.value))
-        tiles_with_dot.append(((4,4), (0,4), Color.BLUE.value))
+        tiles_with_dot=info_stage[3]
+
+        #tiles_with_dot = []
+        #tiles_with_dot.append(((0,0), (1,2), Color.RED.value))
+        #tiles_with_dot.append(((2,0), (2,2), Color.YELLOW.value))
+        #tiles_with_dot.append(((4,4), (0,4), Color.BLUE.value))
 
 
         new_board = Board(n_tiles_perRow, tile_length, dot_radius, tiles_with_dot)
