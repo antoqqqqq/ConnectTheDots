@@ -1,3 +1,4 @@
+from enumaration import *
 def readfile(filename):
     try:
         with open(filename, 'r') as f:
@@ -32,3 +33,28 @@ def write_file(filename,text):
                 f.write(row[0]+'-'+row[1]+'-'+row[2]+'-'+row[3]+'\n')
     except IOError:
         print("Error: could not write file " + filename)
+def read_stage(filename):
+    try:
+        with open(filename, 'r') as f:
+            a=[]
+            tiles_with_dot = []
+            for line in f:
+                a.append(list(line.strip('\n').split('-')))
+            stage=a[0][0]
+            n_tiles_perRow=a[1][0]
+            number_node=a[2][0]
+            y=3
+            for i in range(int(number_node)):
+                node1=a[y][0].split(',')
+                node2=a[y][1].split(',')
+                color=a[y][2].split(',')
+                y+=1
+
+
+                tiles_with_dot.append((node1, node2, color))
+            f.close()          
+        return int(stage),int(n_tiles_perRow),int(number_node),tiles_with_dot
+    except IOError:
+        print("Error: could not read file " + filename)
+
+
