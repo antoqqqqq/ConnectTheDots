@@ -207,6 +207,10 @@ class GameMenu:
 
         #move from first dot to next tile
         if(self.previous_passed_tile_rc == None):
+            #prevent moving if the next Tile has line color already
+            if self.board.hasLineColor(pressedTile_pos[0], pressedTile_pos[1]):
+                return
+            
             self.previous_passed_tile_rc = self.current_held_tile_rc
             self.current_held_tile_rc = pressedTile_pos
 
