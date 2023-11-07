@@ -51,7 +51,7 @@ def read_stage(filename):
                 y+=1
 
 
-                tiles_with_dot.append((node1, node2, color))
+                tiles_with_dot.append(((int(node1[0]),int(node1[1])),(int(node2[0]),int(node2[1])), (int(color[0]),int(color[1]),int(color[2]))))
             f.close()          
         return int(stage),int(n_tiles_perRow),int(number_node),tiles_with_dot
     except IOError:

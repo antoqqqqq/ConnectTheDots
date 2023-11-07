@@ -13,7 +13,7 @@ class GameMenu:
         self.board_border = 5
         self.board = self.create_game(stage_number)
 
-        #variables for processing user mouse inputs on board
+        #variables for processing user mouse inputs on board    
         self.is_connecting_dot = False
         self.previous_passed_tile_rc = None
         self.current_held_tile_rc = None
