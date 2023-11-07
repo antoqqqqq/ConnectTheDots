@@ -2,7 +2,6 @@ import pygame
 from data import *
 from sprite import *
 from business import *
-from enumaration import *
 
 class GameMenu:
     def __init__(self, setting_option, stage_number):
@@ -61,12 +60,14 @@ class GameMenu:
         return x, y
     
     def create_game(self, stage_number):
-        n_tiles_perRow = 4
+        n_tiles_perRow = 5
         tile_length = self.board_length / n_tiles_perRow
         dot_radius = int(tile_length * 0.3)
         tiles_with_dot = []
         tiles_with_dot.append(((0,0), (1,2), Color.RED.value))
         tiles_with_dot.append(((2,0), (2,2), Color.YELLOW.value))
+        tiles_with_dot.append(((4,4), (0,4), Color.BLUE.value))
+
 
         new_board = Board(n_tiles_perRow, tile_length, dot_radius, tiles_with_dot)
         # new_board.setTileLineDir(0, 0, Direction.Right.value)
@@ -150,7 +151,7 @@ class GameMenu:
                             self.start_tile_rc = [r, c]                   
             if event.type == pygame.MOUSEBUTTONUP:
                 self.is_connecting_dot = False
-                    
+              
     def getDirectionName(self, r_dif, c_dif):
         #go right
         if(r_dif, c_dif) == (0, 1):
@@ -183,8 +184,15 @@ class GameMenu:
             return
         
         #first click
-        if(self.current_held_tile_rc == None or self.current_held_tile_rc == pressedTile_pos):
+        if(self.current_held_tile_rc == None):
+            self.board.resetTilesMovement(pressedTile_pos[0], pressedTile_pos[1])
+            otherDotPos = self.board.getOtherDotTile(pressedTile_pos[0], pressedTile_pos[1])
+            self.board.resetTilesMovement(otherDotPos[0], otherDotPos[1])
             self.current_held_tile_rc = pressedTile_pos
+            return
+        
+        #stop processing movement if user hasn't moved cursor to a different Tile
+        if(self.current_held_tile_rc == pressedTile_pos):
             return
         
         #prevent moving diagonally or other types of movement, can only move 1 step in row or column at a time
@@ -227,9 +235,7 @@ class GameMenu:
         #stop moving if connect with the second dot
         if self.board.hasDot(self.current_held_tile_rc[0], self.current_held_tile_rc[1]) and pressedTile_pos != self.previous_passed_tile_rc:
             return
-
-
-        
+   
         #from second move onward
         if pressedTile_pos != self.current_held_tile_rc and pressedTile_pos != self.previous_passed_tile_rc:
             #prevent moving to the origin Dot Tile
@@ -270,8 +276,6 @@ class GameMenu:
             self.previous_passed_tile_rc[1] += col_offset
             return
         
-        
-
     def update(self):
         if self.is_connecting_dot:
             mouse_x, mouse_y = self.get_mouse_pos()
@@ -282,8 +286,7 @@ class GameMenu:
             self.previous_passed_tile_rc = None
             self.current_held_color = None
             self.start_tile_rc = None
-
-    
+   
     def draw_board(self):
         x_start, y_start = self.board_topLeft[0], self.board_topLeft[1]
         board_length = self.board_length
