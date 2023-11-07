@@ -23,6 +23,8 @@ class Board:
         self.tile_length = tile_length
         self.dot_radius = dot_radius
         self.tiles = []
+        self.DotTiles = tiles_with_dot
+        #init self.tiles
         for i in range(self.n_tiles_perRow):
             for j in range(self.n_tiles_perRow):
                 new_tile = Tile(None, None)
@@ -40,40 +42,94 @@ class Board:
     def getTileFromMousePos(self, mousePos: Tuple[int, int]) -> Tile:
         pass
     
-    def setTile(self, row, col, direction, assigned_dir = "Enter", line_color = None):
-        if assigned_dir == "Enter": 
-            self.tiles[row * self.n_tiles_perRow + col].line_enter_direction = direction
-        elif assigned_dir == "Exit":
-            self.tiles[row * self.n_tiles_perRow + col].line_exit_direction = direction
+    def setTile(self, row, col, enter_direction, exit_direction, line_color):
+        self.tiles[row * self.n_tiles_perRow + col].line_enter_direction = enter_direction
+        self.tiles[row * self.n_tiles_perRow + col].line_exit_direction = exit_direction
         self.tiles[row * self.n_tiles_perRow + col].line_color = line_color
         
-        
-        
-
     def setTileLineDir(self, row, col, exit_dir, enter_dir = None):
         self.tiles[row * self.n_tiles_perRow + col].line_enter_direction = enter_dir
         self.tiles[row * self.n_tiles_perRow + col].line_exit_direction = exit_dir
     
+    def setTileEnterDir(self, row, col, enter_dir):
+        self.tiles[row * self.n_tiles_perRow + col].line_enter_direction = enter_dir
+
+    def setTileExitDir(self, row, col, exit_dir):
+        self.tiles[row * self.n_tiles_perRow + col].line_exit_direction = exit_dir
+
     def getTileLineDir_LineColor(self, row, col) -> Tuple[Direction, Direction, Color]:
         enter_dir = self.tiles[row * self.n_tiles_perRow + col].line_enter_direction
         exit_dir = self.tiles[row * self.n_tiles_perRow + col].line_exit_direction
         line_color = self.tiles[row * self.n_tiles_perRow + col].line_color
         return enter_dir, exit_dir, line_color
+    
+    def getTileLineDir(self, row, col) -> Tuple[Direction, Direction]:
+        enter_dir = self.tiles[row * self.n_tiles_perRow + col].line_enter_direction
+        exit_dir = self.tiles[row * self.n_tiles_perRow + col].line_exit_direction
+        return enter_dir, exit_dir
 
+    def getTileExitDir(self, row, col) -> Direction:
+        return self.tiles[row * self.n_tiles_perRow + col].line_exit_direction
+    
     def containsLine(self, row, col) -> bool:
         return self.tiles[row * self.n_tiles_perRow + col].line_exit_direction != None or self.tiles[row * self.n_tiles_perRow + col].line_enter_direction != None
 
     def setTileLineColor(self, row, col, color):
         self.tiles[row * self.n_tiles_perRow + col].line_color = color
 
+    def getTileLineColor(self, row, col):
+        return self.tiles[row * self.n_tiles_perRow + col].line_color
+    
     def getTileDot(self, row, col):
         return self.tiles[row * self.n_tiles_perRow + col].getDot()
+
+    def hasDot(self, row, col) -> bool:
+        dot = self.getTileDot(row, col)
+        if(dot == None):
+            return False
+        return True
+
+    def hasLineColor(self, row, col) -> bool:
+        if self.tiles[row * self.n_tiles_perRow + col].line_color == None:
+            return False
+        return True
+    
+    def hasExitDir(self, row, col) -> bool:
+        return self.tiles[row * self.n_tiles_perRow + col].line_exit_direction != None
+    
+    def hasEnterDir(self, row, col) -> bool:
+        return self.tiles[row * self.n_tiles_perRow + col].line_enter_direction != None
 
     def getTileWithDotPos(self):
         return [(row, col, dot.color) for row, col in enumerate(self.tiles) for dot in col if dot is not None]
     
-# board = Board()
-# test = 0
-# test = 1
-# print("")
-# print("")
+    def getOtherDotTile(self, row, col):
+        if self.hasDot(row, col) == False:
+            return None
+        
+        dotColor = self.getTileDot(row, col).color
+        for dotPair in self.DotTiles:
+            if(dotPair[2] == dotColor):
+                if((row, col) != dotPair[0]):
+                    return dotPair[0]
+                else:
+                    return dotPair[1]
+        
+    #set all the connected tiles directions, line_color to None
+    #pass in the starting Dot Tile
+    def resetTilesMovement(self, row, col):
+        if self.hasDot(row, col) == False:
+            return
+        
+        cur_row, cur_col = row, col
+        while self.hasExitDir(cur_row, cur_col):
+            dir_value = self.getTileExitDir(cur_row, cur_col)
+            self.setTile(cur_row, cur_col, None, None, None)
+
+            offset_r, offset_c = DirectionUtil.getMoveValue(dir_value)
+            cur_row += offset_r
+            cur_col += offset_c
+        self.setTile(cur_row, cur_col, None, None, None)
+
+
+

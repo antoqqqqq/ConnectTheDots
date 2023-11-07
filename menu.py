@@ -2,7 +2,6 @@ import pygame
 from data import *
 from sprite import *
 from business import *
-from enumaration import *
 
 class GameMenu:
     def __init__(self, setting_option, stage_number):
@@ -19,6 +18,7 @@ class GameMenu:
         self.previous_passed_tile_rc = None
         self.current_held_tile_rc = None
         self.current_held_color = None
+        self.start_tile_rc = None
 
         #pygame variables
         pygame.init()
@@ -60,12 +60,14 @@ class GameMenu:
         return x, y
     
     def create_game(self, stage_number):
-        n_tiles_perRow = 4
+        n_tiles_perRow = 5
         tile_length = self.board_length / n_tiles_perRow
         dot_radius = int(tile_length * 0.3)
         tiles_with_dot = []
         tiles_with_dot.append(((0,0), (1,2), Color.RED.value))
         tiles_with_dot.append(((2,0), (2,2), Color.YELLOW.value))
+        tiles_with_dot.append(((4,4), (0,4), Color.BLUE.value))
+
 
         new_board = Board(n_tiles_perRow, tile_length, dot_radius, tiles_with_dot)
         # new_board.setTileLineDir(0, 0, Direction.Right.value)
@@ -145,10 +147,11 @@ class GameMenu:
                         r, c = self.get_Tile_pos(mouse_x, mouse_y)
                         if(self.board.getTileDot(r, c) != None):
                             self.is_connecting_dot = True
-                            self.current_held_color = self.board.getTileDot(r, c).color                     
+                            self.current_held_color = self.board.getTileDot(r, c).color  
+                            self.start_tile_rc = [r, c]                   
             if event.type == pygame.MOUSEBUTTONUP:
                 self.is_connecting_dot = False
-                    
+              
     def getDirectionName(self, r_dif, c_dif):
         #go right
         if(r_dif, c_dif) == (0, 1):
@@ -163,14 +166,52 @@ class GameMenu:
         elif(r_dif, c_dif) == (-1, 0):
             return "Up"
     
+    def getMoveValue(self, move: str):
+        r = 0
+        c = 0
+        if(move == "Right"):
+            c = 1
+        elif(move == "Left"):
+            c = -1
+        elif(move == "Up"):
+            r = -1
+        elif(move == "Down"):
+            r = 1
+        return r, c
+    
     def processPressedTile(self, pressedTile_pos):
         if(pressedTile_pos == None):
             return
         
-        if(self.current_held_tile_rc == None or self.current_held_tile_rc == pressedTile_pos):
+        #first click
+        if(self.current_held_tile_rc == None):
+            self.board.resetTilesMovement(pressedTile_pos[0], pressedTile_pos[1])
+            otherDotPos = self.board.getOtherDotTile(pressedTile_pos[0], pressedTile_pos[1])
+            self.board.resetTilesMovement(otherDotPos[0], otherDotPos[1])
             self.current_held_tile_rc = pressedTile_pos
             return
+        
+        #stop processing movement if user hasn't moved cursor to a different Tile
+        if(self.current_held_tile_rc == pressedTile_pos):
+            return
+        
+        #prevent moving diagonally or other types of movement, can only move 1 step in row or column at a time
+        if(abs(pressedTile_pos[0] - self.current_held_tile_rc[0]) + abs(pressedTile_pos[1] - self.current_held_tile_rc[1]) >= 2):
+            return
+        
+        #check if Tile has Dot
+        if self.board.hasDot(pressedTile_pos[0], pressedTile_pos[1]):
+            #prevent moving to Dot Tile with different color
+            if(self.board.getTileDot(pressedTile_pos[0], pressedTile_pos[1]).color != self.current_held_color):
+                return
+        
+        #check if Tile has line color already
+        if self.board.hasLineColor(pressedTile_pos[0], pressedTile_pos[1]):
+            #prevent moving to another Tile with different line color:
+            if self.board.getTileLineColor(pressedTile_pos[0], pressedTile_pos[1]) != self.current_held_color:
+                return
 
+        #move from first dot to next tile
         if(self.previous_passed_tile_rc == None):
             self.previous_passed_tile_rc = self.current_held_tile_rc
             self.current_held_tile_rc = pressedTile_pos
@@ -185,14 +226,22 @@ class GameMenu:
             directionName = self.getDirectionName(r_dif, c_dif) 
             current_to_previous_Enterdirection = directionName
 
-            
-            self.board.setTile(self.previous_passed_tile_rc[0], self.previous_passed_tile_rc[1], Direction[previous_to_current_Exitdirection].value, assigned_dir="Exit", line_color=self.current_held_color)
-            self.board.setTile(self.current_held_tile_rc[0], self.current_held_tile_rc[1], 
-                               Direction[current_to_previous_Enterdirection].value, assigned_dir="Enter"
-                               , line_color=self.current_held_color)
+            self.board.setTileExitDir(self.previous_passed_tile_rc[0], self.previous_passed_tile_rc[1], Direction[previous_to_current_Exitdirection].value)
+            self.board.setTileLineColor(self.previous_passed_tile_rc[0], self.previous_passed_tile_rc[1], color=self.current_held_color)
+            self.board.setTileEnterDir(self.current_held_tile_rc[0], self.current_held_tile_rc[1], Direction[current_to_previous_Enterdirection].value)
+            self.board.setTileLineColor(self.current_held_tile_rc[0], self.current_held_tile_rc[1], color=self.current_held_color)
             return
         
+        #stop moving if connect with the second dot
+        if self.board.hasDot(self.current_held_tile_rc[0], self.current_held_tile_rc[1]) and pressedTile_pos != self.previous_passed_tile_rc:
+            return
+   
+        #from second move onward
         if pressedTile_pos != self.current_held_tile_rc and pressedTile_pos != self.previous_passed_tile_rc:
+            #prevent moving to the origin Dot Tile
+            if pressedTile_pos == self.start_tile_rc:
+                return
+            
             self.previous_passed_tile_rc = self.current_held_tile_rc
             self.current_held_tile_rc = pressedTile_pos
 
@@ -206,17 +255,27 @@ class GameMenu:
             directionName = self.getDirectionName(r_dif, c_dif) 
             current_to_previous_Enterdirection = directionName
 
-            
-            self.board.setTile(self.previous_passed_tile_rc[0], self.previous_passed_tile_rc[1],
-                                Direction[previous_to_current_Exitdirection].value, assigned_dir="Exit",
-                                line_color=self.current_held_color)
-            self.board.setTile(self.current_held_tile_rc[0], self.current_held_tile_rc[1], 
-                               Direction[current_to_previous_Enterdirection].value, assigned_dir="Enter",
-                               line_color=self.current_held_color)
+            self.board.setTileExitDir(self.previous_passed_tile_rc[0], self.previous_passed_tile_rc[1], Direction[previous_to_current_Exitdirection].value)
+            self.board.setTileEnterDir(self.current_held_tile_rc[0], self.current_held_tile_rc[1], Direction[current_to_previous_Enterdirection].value)
+            self.board.setTileLineColor(self.current_held_tile_rc[0], self.current_held_tile_rc[1], color=self.current_held_color)
             return
-        # if(pressedTile_pos == self.previous_passed_tile_rc):
-        #     self.board.setTile(self.previous)
 
+        #tracing back moves
+        if(pressedTile_pos == self.previous_passed_tile_rc):
+            self.board.setTileEnterDir(self.current_held_tile_rc[0], self.current_held_tile_rc[1], None)
+            self.board.setTileLineColor(self.current_held_tile_rc[0], self.current_held_tile_rc[1], None)
+            self.board.setTileExitDir(self.previous_passed_tile_rc[0], self.previous_passed_tile_rc[1], None)
+
+            self.current_held_tile_rc = pressedTile_pos
+            previous_enter_dir, previous_exit_dir = self.board.getTileLineDir(self.previous_passed_tile_rc[0], self.previous_passed_tile_rc[1])
+            if(previous_enter_dir == None):
+                self.previous_passed_tile_rc = None
+                return
+            rol_offset, col_offset = self.getMoveValue(Direction(previous_enter_dir).name)
+            self.previous_passed_tile_rc[0] += rol_offset
+            self.previous_passed_tile_rc[1] += col_offset
+            return
+        
     def update(self):
         if self.is_connecting_dot:
             mouse_x, mouse_y = self.get_mouse_pos()
@@ -226,8 +285,8 @@ class GameMenu:
             self.current_held_tile_rc = None
             self.previous_passed_tile_rc = None
             self.current_held_color = None
-
-    
+            self.start_tile_rc = None
+   
     def draw_board(self):
         x_start, y_start = self.board_topLeft[0], self.board_topLeft[1]
         board_length = self.board_length

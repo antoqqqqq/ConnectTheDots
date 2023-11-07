@@ -4,7 +4,20 @@ class Direction(Enum):
     Left =[-1, -0.75]
     Up =[-0.75, -1]
     Down =[-0.75, -0.5]
-
+            
+class DirectionUtil:
+    @staticmethod
+    def getMoveValue(direction_value):
+        moveName = Direction(value=direction_value).name
+        if(moveName == "Right"):
+            return (0, 1)
+        elif(moveName == "Left"):
+            return (0, -1)
+        elif(moveName == "Down"):
+            return (1, 0)
+        elif(moveName == "Up"):
+            return (-1, 0)
+    
 class Color(Enum):
     RED = (255,0,0)
     GREEN = (0,255,0)
