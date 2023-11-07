@@ -19,6 +19,7 @@ class GameMenu:
         self.previous_passed_tile_rc = None
         self.current_held_tile_rc = None
         self.current_held_color = None
+        self.start_tile_rc = None
 
         #pygame variables
         pygame.init()
@@ -145,7 +146,8 @@ class GameMenu:
                         r, c = self.get_Tile_pos(mouse_x, mouse_y)
                         if(self.board.getTileDot(r, c) != None):
                             self.is_connecting_dot = True
-                            self.current_held_color = self.board.getTileDot(r, c).color                     
+                            self.current_held_color = self.board.getTileDot(r, c).color  
+                            self.start_tile_rc = [r, c]                   
             if event.type == pygame.MOUSEBUTTONUP:
                 self.is_connecting_dot = False
                     
@@ -185,7 +187,7 @@ class GameMenu:
             self.current_held_tile_rc = pressedTile_pos
             return
         
-        #prevent moving diagonally
+        #prevent moving diagonally or other types of movement, can only move 1 step in row or column at a time
         if(abs(pressedTile_pos[0] - self.current_held_tile_rc[0]) + abs(pressedTile_pos[1] - self.current_held_tile_rc[1]) >= 2):
             return
         
@@ -216,19 +218,24 @@ class GameMenu:
             directionName = self.getDirectionName(r_dif, c_dif) 
             current_to_previous_Enterdirection = directionName
 
-            
-            self.board.setTile(self.previous_passed_tile_rc[0], self.previous_passed_tile_rc[1], Direction[previous_to_current_Exitdirection].value, assigned_dir="Exit", line_color=self.current_held_color)
-            self.board.setTile(self.current_held_tile_rc[0], self.current_held_tile_rc[1], 
-                               Direction[current_to_previous_Enterdirection].value, assigned_dir="Enter"
-                               , line_color=self.current_held_color)
+            self.board.setTileExitDir(self.previous_passed_tile_rc[0], self.previous_passed_tile_rc[1], Direction[previous_to_current_Exitdirection].value)
+            self.board.setTileLineColor(self.previous_passed_tile_rc[0], self.previous_passed_tile_rc[1], color=self.current_held_color)
+            self.board.setTileEnterDir(self.current_held_tile_rc[0], self.current_held_tile_rc[1], Direction[current_to_previous_Enterdirection].value)
+            self.board.setTileLineColor(self.current_held_tile_rc[0], self.current_held_tile_rc[1], color=self.current_held_color)
             return
         
         #stop moving if connect with the second dot
         if self.board.hasDot(self.current_held_tile_rc[0], self.current_held_tile_rc[1]) and pressedTile_pos != self.previous_passed_tile_rc:
             return
 
+
+        
         #from second move onward
         if pressedTile_pos != self.current_held_tile_rc and pressedTile_pos != self.previous_passed_tile_rc:
+            #prevent moving to the origin Dot Tile
+            if pressedTile_pos == self.start_tile_rc:
+                return
+            
             self.previous_passed_tile_rc = self.current_held_tile_rc
             self.current_held_tile_rc = pressedTile_pos
 
@@ -242,13 +249,9 @@ class GameMenu:
             directionName = self.getDirectionName(r_dif, c_dif) 
             current_to_previous_Enterdirection = directionName
 
-            
-            self.board.setTile(self.previous_passed_tile_rc[0], self.previous_passed_tile_rc[1],
-                                Direction[previous_to_current_Exitdirection].value, assigned_dir="Exit",
-                                line_color=self.current_held_color)
-            self.board.setTile(self.current_held_tile_rc[0], self.current_held_tile_rc[1], 
-                               Direction[current_to_previous_Enterdirection].value, assigned_dir="Enter",
-                               line_color=self.current_held_color)
+            self.board.setTileExitDir(self.previous_passed_tile_rc[0], self.previous_passed_tile_rc[1], Direction[previous_to_current_Exitdirection].value)
+            self.board.setTileEnterDir(self.current_held_tile_rc[0], self.current_held_tile_rc[1], Direction[current_to_previous_Enterdirection].value)
+            self.board.setTileLineColor(self.current_held_tile_rc[0], self.current_held_tile_rc[1], color=self.current_held_color)
             return
 
         #tracing back moves
@@ -278,6 +281,7 @@ class GameMenu:
             self.current_held_tile_rc = None
             self.previous_passed_tile_rc = None
             self.current_held_color = None
+            self.start_tile_rc = None
 
     
     def draw_board(self):

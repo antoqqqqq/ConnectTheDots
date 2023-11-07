@@ -98,9 +98,9 @@ class Board:
     def getTileWithDotPos(self):
         return [(row, col, dot.color) for row, col in enumerate(self.tiles) for dot in col if dot is not None]
     
-    #set all the tiles directions, line_color to None
+    #set all the connected tiles directions, line_color to None
     #pass in the starting Dot Tile
-    def resetTiles(self, row, col):
+    def resetTilesMovement(self, row, col):
         pass
 # board = Board()
 # test = 0
