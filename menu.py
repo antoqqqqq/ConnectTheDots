@@ -175,14 +175,33 @@ class GameMenu:
         elif(move == "Down"):
             r = 1
         return r, c
+    
     def processPressedTile(self, pressedTile_pos):
         if(pressedTile_pos == None):
             return
         
+        #first click
         if(self.current_held_tile_rc == None or self.current_held_tile_rc == pressedTile_pos):
             self.current_held_tile_rc = pressedTile_pos
             return
+        
+        #prevent moving diagonally
+        if(abs(pressedTile_pos[0] - self.current_held_tile_rc[0]) + abs(pressedTile_pos[1] - self.current_held_tile_rc[1]) >= 2):
+            return
+        
+        #check if Tile has Dot
+        if self.board.hasDot(pressedTile_pos[0], pressedTile_pos[1]):
+            #prevent moving to Dot Tile with different color
+            if(self.board.getTileDot(pressedTile_pos[0], pressedTile_pos[1]).color != self.current_held_color):
+                return
+        
+        #check if Tile has line color already
+        if self.board.hasLineColor(pressedTile_pos[0], pressedTile_pos[1]):
+            #prevent moving to another Tile with different line color:
+            if self.board.getTileLineColor(pressedTile_pos[0], pressedTile_pos[1]) != self.current_held_color:
+                return
 
+        #move from first dot to next tile
         if(self.previous_passed_tile_rc == None):
             self.previous_passed_tile_rc = self.current_held_tile_rc
             self.current_held_tile_rc = pressedTile_pos
@@ -204,6 +223,11 @@ class GameMenu:
                                , line_color=self.current_held_color)
             return
         
+        #stop moving if connect with the second dot
+        if self.board.hasDot(self.current_held_tile_rc[0], self.current_held_tile_rc[1]) and pressedTile_pos != self.previous_passed_tile_rc:
+            return
+
+        #from second move onward
         if pressedTile_pos != self.current_held_tile_rc and pressedTile_pos != self.previous_passed_tile_rc:
             self.previous_passed_tile_rc = self.current_held_tile_rc
             self.current_held_tile_rc = pressedTile_pos
@@ -226,7 +250,8 @@ class GameMenu:
                                Direction[current_to_previous_Enterdirection].value, assigned_dir="Enter",
                                line_color=self.current_held_color)
             return
-        
+
+        #tracing back moves
         if(pressedTile_pos == self.previous_passed_tile_rc):
             self.board.setTileEnterDir(self.current_held_tile_rc[0], self.current_held_tile_rc[1], None)
             self.board.setTileLineColor(self.current_held_tile_rc[0], self.current_held_tile_rc[1], None)
@@ -241,6 +266,8 @@ class GameMenu:
             self.previous_passed_tile_rc[0] += rol_offset
             self.previous_passed_tile_rc[1] += col_offset
             return
+        
+        
 
     def update(self):
         if self.is_connecting_dot:

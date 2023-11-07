@@ -78,12 +78,30 @@ class Board:
     def setTileLineColor(self, row, col, color):
         self.tiles[row * self.n_tiles_perRow + col].line_color = color
 
+    def getTileLineColor(self, row, col):
+        return self.tiles[row * self.n_tiles_perRow + col].line_color
+    
     def getTileDot(self, row, col):
         return self.tiles[row * self.n_tiles_perRow + col].getDot()
 
+    def hasDot(self, row, col) -> bool:
+        dot = self.getTileDot(row, col)
+        if(dot == None):
+            return False
+        return True
+
+    def hasLineColor(self, row, col) -> bool:
+        if self.tiles[row * self.n_tiles_perRow + col].line_color == None:
+            return False
+        return True
+    
     def getTileWithDotPos(self):
         return [(row, col, dot.color) for row, col in enumerate(self.tiles) for dot in col if dot is not None]
     
+    #set all the tiles directions, line_color to None
+    #pass in the starting Dot Tile
+    def resetTiles(self, row, col):
+        pass
 # board = Board()
 # test = 0
 # test = 1
