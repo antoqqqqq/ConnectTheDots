@@ -33,9 +33,9 @@ def write_file(filename,text):
                 f.write(row[0]+'-'+row[1]+'-'+row[2]+'-'+row[3]+'\n')
     except IOError:
         print("Error: could not write file " + filename)
-def read_stage(filename):
+def read_stage( file_path):
     try:
-        with open(filename, 'r') as f:
+        with open( file_path, 'r') as f:
             a=[]
             tiles_with_dot = []
             for line in f:
@@ -55,6 +55,6 @@ def read_stage(filename):
             f.close()          
         return int(stage),int(n_tiles_perRow),int(number_node),tiles_with_dot
     except IOError:
-        print("Error: could not read file " + filename)
+        print("Error: could not read file " + file_path)
 
 
