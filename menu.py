@@ -61,7 +61,7 @@ class GameMenu:
     
     def create_game(self, stage_number):
         #info_stage=[int(stage),int(n_tiles_perRow),int(number_node),tiles_with_dot]
-        info_stage=read_stage('level'+str(stage_number)+'.txt')        
+        info_stage=read_stage('resources/level/level'+str(stage_number)+'.txt')
         n_tiles_perRow=info_stage[1]
         tile_length = self.board_length / n_tiles_perRow
         dot_radius = int(tile_length * 0.3)
