@@ -349,10 +349,10 @@ class StageMenu:
 
     def init_all_sprites(self):
         self.sprite_list = pygame.sprite.Group()
-        self.sprite_list.add(Sprite(0, 0, "resources/images/background2.jpg", self.width, self.height))
-        self.sprite_list.add(Sprite(32, 85, "resources/images/BASIC.png", scaler=0.5))
-        self.sprite_list.add(Sprite(39, 258, "resources/images/SPECIAL.png", scaler=0.5))
-        self.sprite_list.add(Sprite(39, 430, "resources/images/DAILY.png", scaler=0.5))
+        self.sprite_list.add(Sprite(0, 0, "resources/images/background5.jpg", self.width, self.height))
+        self.sprite_list.add(Sprite(32, 85, "resources/images/BASIC0.png", scaler=0.5))
+        self.sprite_list.add(Sprite(39, 258, "resources/images/SPECIAL0.png", scaler=0.5))
+        self.sprite_list.add(Sprite(39, 430, "resources/images/DAILY0.png", scaler=0.5))
 
     def get_mouse_pos(self):
         x, y = pygame.mouse.get_pos()
@@ -400,3 +400,105 @@ class StageMenu:
             self.event()
             self.update()
             self.draw()
+
+
+class HomeMenu:
+    def __init__(self, setting_option):
+        self.setting_option = setting_option
+        self.width, self.height, self.board_width, self.board_height = self.get_setting_config(setting_option)
+        self.background_color = (255,255,255)
+
+        #pygame variables
+        pygame.init()
+        self.screen = pygame.display.set_mode((self.width, self.height))
+        pygame.display.set_caption("Connect the Dots")
+        #screen to draw 
+        self.screen = pygame.display.set_mode((self.width, self.height))
+        pygame.display.set_caption("Connect the Dots")
+        self.clock = pygame.time.Clock()
+
+        self.init_all_sprites()
+        self.button_list = []
+        self.init_all_buttons()
+
+    def get_setting_config(self, setting_option):
+        width = 900
+        height = 600
+        board_width = 500
+        board_height = 500
+
+        if(setting_option == 1):
+            pass
+        elif(setting_option == 2):
+            pass
+        elif(setting_option == 3):
+            pass
+
+        return width, height, board_width, board_height
+    def init_all_buttons(self):        
+          self.button_list.append(Button(150, 450, "resources/images/BASIC0.png", "Home", scaler = 1))
+          self.button_list.append(Button(380, 450, "resources/images/SPECIAL0.png", "Home", scaler = 1))
+          self.button_list.append(Button(600, 450, "resources/images/DAILY0.png", "Home", scaler = 1))
+          self.button_list.append(Button(350, 200, "resources/images/Level_04.png", "Home", scaler = 1))
+
+    def init_all_sprites(self):
+        self.sprite_list = pygame.sprite.Group()
+        self.sprite_list.add(Sprite(0, 0, "resources/images/background5.jpg", self.width, self.height))
+
+    def get_mouse_pos(self):
+        x, y = pygame.mouse.get_pos()
+        return x, y  
+
+    def event(self):
+        #check if user press the exit button on the top right
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.playing = False
+                pygame.quit()
+                quit(0)
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                clicked_btn_name = ""
+                for button in self.button_list:
+                    if(button.isClicked()):
+                        clicked_btn_name = button.getName()
+                
+                if(clicked_btn_name == "Home"):
+                    stageMenu = StageMenu(0)
+                    StageMenu.run()
+
+
+    def update(self):
+        pass
+    def draw_labels(self):
+        Label(250, 40, "L", font_size= 150, color = (255,0,0)).draw(self.screen)
+        Label(350, 40, "I", font_size= 150, color = (0,255,0)).draw(self.screen)
+        Label(450, 40, "N", font_size= 150, color = (255,255,0)).draw(self.screen)
+        Label(550, 40, "K", font_size= 150, color = (0,0,255)).draw(self.screen)
+        Label(250, 400, "CHOOSE CATEGORY AND LEVEL", font_size= 30, color = (255,0,0)).draw(self.screen)
+
+    def draw(self):
+        self.screen.fill(self.background_color)
+        self.draw_labels()
+        self.sprite_list.draw(self.screen)
+        for button in self.button_list:
+            button.draw(self.screen)
+        self.draw_labels()
+
+        pygame.display.flip()
+    
+    def run(self):
+        self.playing = True
+        while self.playing:
+            self.clock.tick(60)
+            self.event()
+            self.update()
+            self.draw()
+# class Button:
+#      def __init__(self, color, x,y,width,height, text=''):
+#         self.color = color
+#         self.x = x
+#         self.y = y
+#         self.width = width
+#         self.height = height
+#         self.text = text
