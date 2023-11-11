@@ -33,13 +33,16 @@ class Board:
                         new_tile.dot = Dot(1, color)
                 self.tiles.append(new_tile)
 
-    def IsGameClear(self,tiles_with_dot,n_tiles_perRow):
+    def IsGameClear(self,tiles_with_dot) -> bool:
         for i in range(len(tiles_with_dot)):
             pos1=tiles_with_dot[i][0]
-            pos2=tiles_with_dot[i][1]
             for y in range(self.n_tiles_perRow**2):
-                if 
-
+                if self.hasExitDir(pos1[0],pos1[1]) == True:
+                    pos1=self.getTileExitDir(pos1[0],pos1[1])
+                elif self.hasDot(pos1[0],pos1[1])== True:
+                    return True
+                elif self.hasExitDir(pos1[0],pos1[1]) != True:
+                    return False
         pass
 
     def new_method(self):
