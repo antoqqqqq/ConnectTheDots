@@ -56,5 +56,7 @@ def read_stage( file_path):
         return int(stage),int(n_tiles_perRow),int(number_node),tiles_with_dot
     except IOError:
         print("Error: could not read file " + file_path)
-
-
+a=read_stage("resources/level/level1.txt")
+b=0
+for i in range(len(a)):
+    b+=1

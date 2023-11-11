@@ -60,6 +60,7 @@ class GameMenu:
         return x, y
     
     def create_game(self, stage_number):
+        stage_number=1
         #info_stage=[int(stage),int(n_tiles_perRow),int(number_node),tiles_with_dot]
         info_stage=read_stage('resources/level/level'+str(stage_number)+'.txt')
         n_tiles_perRow=info_stage[1]

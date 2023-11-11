@@ -33,8 +33,17 @@ class Board:
                         new_tile.dot = Dot(1, color)
                 self.tiles.append(new_tile)
 
-    def IsGameClear(self):
+    def IsGameClear(self,tiles_with_dot,n_tiles_perRow):
+        for i in range(len(tiles_with_dot)):
+            pos1=tiles_with_dot[i][0]
+            pos2=tiles_with_dot[i][1]
+            for y in range(self.n_tiles_perRow**2):
+                if 
+
         pass
+
+    def new_method(self):
+        i=1
 
     def getTile(self, row: int, col: int) -> Tile:
         return self.tiles[row * self.n_tiles_perRow + col]
@@ -130,6 +139,4 @@ class Board:
             cur_row += offset_r
             cur_col += offset_c
         self.setTile(cur_row, cur_col, None, None, None)
-
-
 
