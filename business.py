@@ -34,7 +34,7 @@ class Board:
                 self.tiles.append(new_tile)
 
     def IsGameClear(self) -> bool:
-        tiles_with_dot = self.DotTiles
+        tiles_with_dot= self.DotTiles
         for i in range(len(tiles_with_dot)):
             pos1 = []
             firstDot = tiles_with_dot[i][0]
@@ -61,8 +61,6 @@ class Board:
         return True
         pass
 
-    def new_method(self):
-        i=1
 
     def getTile(self, row: int, col: int) -> Tile:
         return self.tiles[row * self.n_tiles_perRow + col]
