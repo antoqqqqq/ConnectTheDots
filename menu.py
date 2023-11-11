@@ -61,7 +61,6 @@ class GameMenu:
         return x, y
     
     def create_game(self, stage_number):
-        stage_number=1
         #info_stage=[int(stage),int(n_tiles_perRow),int(number_node),tiles_with_dot]
         info_stage=read_stage('resources/level/level'+str(stage_number)+'.txt')
         n_tiles_perRow=info_stage[1]
@@ -285,9 +284,9 @@ class GameMenu:
             return
         
     def update(self):
-        # if self.board.IsGameClear():
-        #     self.gameClear = True
-
+        if self.board.IsGameClear():
+            self.gameclear=True
+          
         if self.is_connecting_dot:
             mouse_x, mouse_y = self.get_mouse_pos()
             pressed_Tile_pos = self.get_Tile_pos(mouse_x, mouse_y)
@@ -354,6 +353,8 @@ class GameMenu:
     def draw(self):
         self.screen.fill(self.background_color)
         self.sprite_list.draw(self.screen)
+        if self.gameclear:
+            Label(200,200,'congra').draw(self.screen)
         for button in self.button_list:
             button.draw(self.screen)
         self.draw_board()

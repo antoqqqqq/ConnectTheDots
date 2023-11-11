@@ -1,4 +1,5 @@
 from menu import *
 
-menu = GameMenu(0, 1)
-menu.run()
+gameMenu = GameMenu(0,5)
+gameMenu.run()
+
