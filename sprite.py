@@ -58,7 +58,7 @@ class Button:
         self.rect.topleft = (x, y)
         self.name = btn_name
         #record if the Button is being clicked
-        self.clicked = False
+        # self.clicked = False
 
     def draw(self, screen):
         screen.blit(self.image, self.rect.topleft)
@@ -66,11 +66,8 @@ class Button:
     def isClicked(self):
         mouse_pos = pygame.mouse.get_pos()
         if self.rect.collidepoint(mouse_pos):
-            if (pygame.mouse.get_pressed()[0] == 1 and self.clicked == False):
-                self.clicked = True
+            if (pygame.mouse.get_pressed()[0]):
                 return True
-            if(pygame.mouse.get_pressed()[0] == 0):
-                self.clicked = False
         return False
     
     def getName(self):

@@ -11,7 +11,7 @@ class GameMenu:
         self.stage_number = stage_number
         self.board_topLeft = [350, 37]
         self.board_border = 5
-        self.board = self.create_game(stage_number)
+        self.board = self.create_game(self.stage_number)
         self.gameClear = False
 
         #variables for processing user mouse inputs on board    
@@ -41,7 +41,10 @@ class GameMenu:
         self.sprite_list.add(Sprite(56, 243, "resources/images/pink_box.png", 187, 56))
         self.sprite_list.add(Sprite(56, 318, "resources/images/red_box.png", 187, 56))
         self.sprite_list.add(Sprite(56, 393, "resources/images/blue_box.png", 187, 56))
-        
+
+    def drawInitalMenu(self):
+        self.draw()
+
     def get_setting_config(self, setting_option):
         width = 900
         height = 600
@@ -55,6 +58,15 @@ class GameMenu:
             pass
         
         return width, height, board_length
+
+    def resetGame(self):
+        self.board = self.create_game(self.stage_number)
+        self.gameClear = False
+        self.is_connecting_dot = False
+        self.previous_passed_tile_rc = None
+        self.current_held_tile_rc = None
+        self.current_held_color = None
+        self.start_tile_rc = None
 
     def get_mouse_pos(self):
         x, y = pygame.mouse.get_pos()
@@ -153,7 +165,17 @@ class GameMenu:
                         if(self.board.getTileDot(r, c) != None):
                             self.is_connecting_dot = True
                             self.current_held_color = self.board.getTileDot(r, c).color  
-                            self.start_tile_rc = [r, c]                   
+                            self.start_tile_rc = [r, c]
+
+                for button in self.button_list:
+                    if(button.isClicked() == False):
+                        continue
+
+                    if(button.getName() == "Reset"):
+                        self.resetGame()
+                    if(button.getName() == "Home"):
+                        self.playing = False
+                    
             if event.type == pygame.MOUSEBUTTONUP:
                 self.is_connecting_dot = False
               
@@ -285,7 +307,7 @@ class GameMenu:
         
     def update(self):
         if self.board.IsGameClear():
-            self.gameclear=True
+            self.gameClear=True
           
         if self.is_connecting_dot:
             mouse_x, mouse_y = self.get_mouse_pos()
@@ -353,8 +375,8 @@ class GameMenu:
     def draw(self):
         self.screen.fill(self.background_color)
         self.sprite_list.draw(self.screen)
-        if self.gameclear:
-            Label(200,200,'congra').draw(self.screen)
+        if self.gameClear:
+            Label(200,200,'congratulation').draw(self.screen)
         for button in self.button_list:
             button.draw(self.screen)
         self.draw_board()
@@ -366,6 +388,8 @@ class GameMenu:
 
     def run(self):
         self.playing = True
+        self.drawInitalMenu()
+
         while self.playing:
             self.clock.tick(60)
             self.event()
@@ -406,23 +430,23 @@ class StageMenu:
 
         return width, height, board_width, board_height
     def init_all_buttons(self):        
-        self.button_list.append(Button(102, 172, "resources/images/Level_01.png", "Home", scaler = 0.3))
-        self.button_list.append(Button(247, 172, "resources/images/Level_02.png", "Home", scaler = 0.3))
-        self.button_list.append(Button(403, 172, "resources/images/Level_03.png", "Home", scaler = 0.3))
-        self.button_list.append(Button(559, 172, "resources/images/Level_04.png", "Home", scaler = 0.3))
-        self.button_list.append(Button(715, 172, "resources/images/Level_05.png", "Home", scaler = 0.3))
+        self.button_list.append(Button(102, 172, "resources/images/Level_01.png", "Level 1", scaler = 0.3))
+        self.button_list.append(Button(247, 172, "resources/images/Level_02.png", "Level 2", scaler = 0.3))
+        self.button_list.append(Button(403, 172, "resources/images/Level_03.png", "Level 3", scaler = 0.3))
+        self.button_list.append(Button(559, 172, "resources/images/Level_04.png", "Level 4", scaler = 0.3))
+        self.button_list.append(Button(715, 172, "resources/images/Level_05.png", "Level 5", scaler = 0.3))
 
-        self.button_list.append(Button(102, 344, "resources/images/Level_01.png", "Home", scaler =0.3))
-        self.button_list.append(Button(247, 344, "resources/images/Level_02.png", "Home", scaler = 0.3))
-        self.button_list.append(Button(403, 344, "resources/images/Level_03.png", "Home", scaler = 0.3))
-        self.button_list.append(Button(559, 344, "resources/images/Level_04.png", "Home", scaler = 0.3))
-        self.button_list.append(Button(715, 344, "resources/images/Level_05.png", "Home", scaler = 0.3))
+        self.button_list.append(Button(102, 344, "resources/images/Level_01.png", "Level 6", scaler =0.3))
+        self.button_list.append(Button(247, 344, "resources/images/Level_02.png", "Level 7", scaler = 0.3))
+        self.button_list.append(Button(403, 344, "resources/images/Level_03.png", "Level 8", scaler = 0.3))
+        self.button_list.append(Button(559, 344, "resources/images/Level_04.png", "Level 9", scaler = 0.3))
+        self.button_list.append(Button(715, 344, "resources/images/Level_05.png", "Level 10", scaler = 0.3))
 
-        self.button_list.append(Button(102, 516, "resources/images/Level_01.png", "Home", scaler = 0.3))
-        self.button_list.append(Button(247, 516, "resources/images/Level_02.png", "Home", scaler = 0.3))
-        self.button_list.append(Button(403, 516, "resources/images/Level_03.png", "Home", scaler = 0.3))
-        self.button_list.append(Button(559, 516, "resources/images/Level_04.png", "Home", scaler = 0.3))
-        self.button_list.append(Button(715, 516, "resources/images/Level_05.png", "Home", scaler = 0.3))
+        self.button_list.append(Button(102, 516, "resources/images/Level_01.png", "Level 10", scaler = 0.3))
+        self.button_list.append(Button(247, 516, "resources/images/Level_02.png", "Level 10", scaler = 0.3))
+        self.button_list.append(Button(403, 516, "resources/images/Level_03.png", "Level 10", scaler = 0.3))
+        self.button_list.append(Button(559, 516, "resources/images/Level_04.png", "Level 10", scaler = 0.3))
+        self.button_list.append(Button(715, 516, "resources/images/Level_05.png", "Level 10", scaler = 0.3))
 
     def init_all_sprites(self):
         self.sprite_list = pygame.sprite.Group()
@@ -430,6 +454,9 @@ class StageMenu:
         self.sprite_list.add(Sprite(32, 85, "resources/images/BASIC0.png", scaler=0.5))
         self.sprite_list.add(Sprite(39, 258, "resources/images/SPECIAL0.png", scaler=0.5))
         self.sprite_list.add(Sprite(39, 430, "resources/images/DAILY0.png", scaler=0.5))
+
+    def drawInitalMenu(self):
+            self.draw()
 
     def get_mouse_pos(self):
         x, y = pygame.mouse.get_pos()
@@ -444,15 +471,40 @@ class StageMenu:
                 quit(0)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                clicked_btn_name = ""
                 for button in self.button_list:
-                    if(button.isClicked()):
-                        clicked_btn_name = button.getName()
-                
-                if(clicked_btn_name == "Home"):
-                    stageMenu = StageMenu(0)
-                    StageMenu.run()
+                    if(button.isClicked() == False):
+                        continue
 
+                    if(button.getName() == "Level 1"):
+                        gameMenu = GameMenu(0, 1)
+                        gameMenu.run()
+                    if(button.getName() == "Level 2"):
+                        gameMenu = GameMenu(0, 2)
+                        gameMenu.run()
+                    if(button.getName() == "Level 3"):
+                        gameMenu = GameMenu(0, 3)
+                        gameMenu.run()
+                    if(button.getName() == "Level 4"):
+                        gameMenu = GameMenu(0, 4)
+                        gameMenu.run()
+                    if(button.getName() == "Level 5"):
+                        gameMenu = GameMenu(0, 5)
+                        gameMenu.run()
+                    if(button.getName() == "Level 6"):
+                        gameMenu = GameMenu(0, 6)
+                        gameMenu.run()
+                    if(button.getName() == "Level 7"):
+                        gameMenu = GameMenu(0, 7)
+                        gameMenu.run()
+                    if(button.getName() == "Level 8"):
+                        gameMenu = GameMenu(0, 8)
+                        gameMenu.run()
+                    if(button.getName() == "Level 9"):
+                        gameMenu = GameMenu(0, 9)
+                        gameMenu.run()
+                    if(button.getName() == "Level 10"):
+                        gameMenu = GameMenu(0, 10)
+                        gameMenu.run()
 
     def update(self):
         pass
@@ -472,6 +524,8 @@ class StageMenu:
     
     def run(self):
         self.playing = True
+
+        self.drawInitalMenu()
         while self.playing:
             self.clock.tick(60)
             self.event()
@@ -513,15 +567,18 @@ class HomeMenu:
 
         return width, height, board_width, board_height
     def init_all_buttons(self):        
-          self.button_list.append(Button(150, 450, "resources/images/BASIC0.png", "Home", scaler = 1))
-          self.button_list.append(Button(380, 450, "resources/images/SPECIAL0.png", "Home", scaler = 1))
-          self.button_list.append(Button(600, 450, "resources/images/DAILY0.png", "Home", scaler = 1))
-          self.button_list.append(Button(350, 200, "resources/images/Level_04.png", "Home", scaler = 1))
+          #self.button_list.append(Button(150, 450, "resources/images/BASIC0.png", "Home", scaler = 1))
+          #self.button_list.append(Button(380, 450, "resources/images/SPECIAL0.png", "Home", scaler = 1))
+          #self.button_list.append(Button(600, 450, "resources/images/DAILY0.png", "Home", scaler = 1))
+          self.button_list.append(Button(350, 200, "resources/images/Level_04.png", "Play", scaler = 1))
 
     def init_all_sprites(self):
         self.sprite_list = pygame.sprite.Group()
         self.sprite_list.add(Sprite(0, 0, "resources/images/background5.jpg", self.width, self.height))
 
+    def drawInitalMenu(self):
+            self.draw()
+            
     def get_mouse_pos(self):
         x, y = pygame.mouse.get_pos()
         return x, y  
@@ -535,14 +592,14 @@ class HomeMenu:
                 quit(0)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                clicked_btn_name = ""
-                for button in self.button_list:
-                    if(button.isClicked()):
-                        clicked_btn_name = button.getName()
-                
-                if(clicked_btn_name == "Home"):
-                    stageMenu = StageMenu(0)
-                    StageMenu.run()
+                if event.type == pygame.MOUSEBUTTONDOWN:
+                    for button in self.button_list:
+                        if(button.isClicked() == False):
+                            continue
+
+                        if(button.getName() == "Play"):
+                            stageMenu = StageMenu(0)
+                            stageMenu.run()
 
 
     def update(self):
@@ -566,16 +623,10 @@ class HomeMenu:
     
     def run(self):
         self.playing = True
+        
+        self.drawInitalMenu()
         while self.playing:
             self.clock.tick(60)
             self.event()
             self.update()
             self.draw()
-# class Button:
-#      def __init__(self, color, x,y,width,height, text=''):
-#         self.color = color
-#         self.x = x
-#         self.y = y
-#         self.width = width
-#         self.height = height
-#         self.text = text
