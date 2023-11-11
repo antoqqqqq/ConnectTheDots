@@ -34,7 +34,7 @@ class Board:
                 self.tiles.append(new_tile)
 
     def IsGameClear(self) -> bool:
-        tiles_with_dot= self.DotTiles
+        tiles_with_dot = self.DotTiles
         for i in range(len(tiles_with_dot)):
             pos1 = []
             firstDot = tiles_with_dot[i][0]
