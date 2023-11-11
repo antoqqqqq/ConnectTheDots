@@ -12,6 +12,7 @@ class GameMenu:
         self.board_topLeft = [350, 37]
         self.board_border = 5
         self.board = self.create_game(stage_number)
+        self.gameClear = False
 
         #variables for processing user mouse inputs on board    
         self.is_connecting_dot = False
@@ -284,6 +285,9 @@ class GameMenu:
             return
         
     def update(self):
+        if self.board.IsGameClear():
+            self.gameClear = True
+
         if self.is_connecting_dot:
             mouse_x, mouse_y = self.get_mouse_pos()
             pressed_Tile_pos = self.get_Tile_pos(mouse_x, mouse_y)
@@ -351,6 +355,10 @@ class GameMenu:
         for button in self.button_list:
             button.draw(self.screen)
         self.draw_board()
+
+        if self.gameClear:
+            Label(200, 200, "Congratulation").draw(self.screen)
+
         pygame.display.flip()
 
     def run(self):

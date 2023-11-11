@@ -33,7 +33,8 @@ class Board:
                         new_tile.dot = Dot(1, color)
                 self.tiles.append(new_tile)
 
-    def IsGameClear(self,tiles_with_dot) -> bool:
+    def IsGameClear(self) -> bool:
+        tiles_with_dot = self.DotTiles
         for i in range(len(tiles_with_dot)):
             pos1=tiles_with_dot[i][0]
             for y in range(self.n_tiles_perRow**2):
