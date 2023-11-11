@@ -285,8 +285,8 @@ class GameMenu:
             return
         
     def update(self):
-        if self.board.IsGameClear():
-            self.gameClear = True
+        # if self.board.IsGameClear():
+        #     self.gameClear = True
 
         if self.is_connecting_dot:
             mouse_x, mouse_y = self.get_mouse_pos()
@@ -341,10 +341,12 @@ class GameMenu:
                         rect_height = rect_length
                         if(exit_dir == Direction.Up.value):
                             rect_y -= 5
+                            rect_height += 5
                         if(exit_dir == Direction.Down.value):
                             rect_height += 5
                         if(exit_dir == Direction.Left.value):
                             rect_x -= 5
+                            rect_width += 5
                         if(exit_dir == Direction.Right.value):
                             rect_width += 5
                         pygame.draw.rect(self.screen, line_color, [rect_x, rect_y, rect_width, rect_height])
