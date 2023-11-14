@@ -294,6 +294,9 @@ class GameMenu:
     def update(self):
         if self.board.IsGameClear():
             self.gameClear=True
+            self.button_win=[]
+            self.button_win.append(Button(300,350,'resources/images/right.png','Next level',60,60))
+            self.button_win.append(Button(200,350,'resources/images/reset_btn.png','Try again',60,60))
           
         if self.is_connecting_dot:
             mouse_x, mouse_y = self.get_mouse_pos()
@@ -391,9 +394,6 @@ class GameMenu:
             Label(600,230,str(self.stage_number)).draw(self.screen)
             Label(600,260,str(self.stage_number)).draw(self.screen)
             Label(600,290,str(self.stage_number)).draw(self.screen)
-            self.button_win=[]
-            self.button_win.append(Button(300,350,'resources/images/right.png','Next level',60,60))
-            self.button_win.append(Button(200,350,'resources/images/reset_btn.png','Try again',60,60))
             for button in self.button_win:
                 button.draw(self.screen) 
         pygame.display.flip()
