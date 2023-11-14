@@ -1,5 +1,7 @@
 from business import *
-from BFS import BFS
+from collections import deque
+from enumaration import DirectionUtil
+from node import Node
 
 class Puzzle:
     #constructor takes in the starting state
@@ -18,7 +20,7 @@ class Puzzle:
     @staticmethod
     #try all possible moves for a dots pair that aren't connected
     #when a dots pair is connected, set the index of the dots pair in dotsConnectedState to true
-    def getPossibleStates(state, dots_list, dotsConnectedState):
+    def getPossibleStates(state, dots_list, dotsConnectedState, size):
         #get the first index that it equals to False in dotsConnectedState
         #the index is -1 (doesn't chang) if all elements in the list are True
         dotPairIndex = -1
@@ -31,16 +33,70 @@ class Puzzle:
             return
         
         dotsPair = dots_list[dotPairIndex]
+        dotColor = dotsPair[2]
 
-        possibleStates = list
+        possibleStates = list()
         #traverse to the end of the line
+        cur_pos = dotsPair[0]
+        while state[cur_pos[0] * size + cur_pos[1]].line_exit_direction != None:
+            cur_pos +=  DirectionUtil.getMoveValueFromName(state[cur_pos[0] * size + cur_pos[1]].line_exit_direction)
         #check if it can go left, right, up, or down
-        #add these possible_newStates in the list after moving
-        #return the possibleStates list
-        
+        #if yes, add the new state to the possible states list
+        move = "Left"
+        next_pos = DirectionUtil.getMoveValueFromName(move)
+        new_state = state.copy()
+        if(state[next_pos[0] * size + next_pos[1]].line_color == None
+           and next_pos[0] >= 0 and next_pos[0] < size and next_pos[1] >= 0 and next_pos[1] < size):
+            new_state[cur_pos[0] * size + cur_pos[1]] = new_state[cur_pos[0] * size + cur_pos[1]].copy()
+            new_state[next_pos[0] * size + next_pos[1]] = new_state[next_pos[0] * size + next_pos[1]].copy()
+            
+            new_state[cur_pos[0] * size + cur_pos[1]].line_exit_direction = "Left"
+            new_state[next_pos[0] * size + next_pos[1]].line_enter_direction = "Right"
+            possibleStates.append(new_state)
 
-    
-    
+        move = "Right"
+        next_pos = DirectionUtil.getMoveValueFromName(move)
+        new_state = state.copy()
+        if(state[next_pos[0] * size + next_pos[1]].line_color == None
+           and next_pos[0] >= 0 and next_pos[0] < size and next_pos[1] >= 0 and next_pos[1] < size):
+            new_state[cur_pos[0] * size + cur_pos[1]] = new_state[cur_pos[0] * size + cur_pos[1]].copy()
+            new_state[next_pos[0] * size + next_pos[1]] = new_state[next_pos[0] * size + next_pos[1]].copy()
+
+            new_state[cur_pos[0] * size + cur_pos[1]].line_exit_direction = "Right"
+            new_state[next_pos[0] * size + next_pos[1]].line_enter_direction = "Left"
+            possibleStates.append(new_state)
+
+        move = "Up"
+        next_pos = DirectionUtil.getMoveValueFromName(move)
+        new_state = state.copy()
+        if(state[next_pos[0] * size + next_pos[1]].line_color == None
+           and next_pos[0] >= 0 and next_pos[0] < size and next_pos[1] >= 0 and next_pos[1] < size):
+            new_state[cur_pos[0] * size + cur_pos[1]] = new_state[cur_pos[0] * size + cur_pos[1]].copy()
+            new_state[next_pos[0] * size + next_pos[1]] = new_state[next_pos[0] * size + next_pos[1]].copy()
+
+            new_state[cur_pos[0] * size + cur_pos[1]].line_exit_direction = "Up"
+            new_state[next_pos[0] * size + next_pos[1]].line_enter_direction = "Down"
+            possibleStates.append(new_state)
+
+        move = "Down"
+        next_pos = DirectionUtil.getMoveValueFromName(move)
+        new_state = state.copy()
+        if(state[next_pos[0] * size + next_pos[1]].line_color == None
+           and next_pos[0] >= 0 and next_pos[0] < size and next_pos[1] >= 0 and next_pos[1] < size):
+            new_state[cur_pos[0] * size + cur_pos[1]] = new_state[cur_pos[0] * size + cur_pos[1]].copy()
+            new_state[next_pos[0] * size + next_pos[1]] = new_state[next_pos[0] * size + next_pos[1]].copy()
+
+            new_state[cur_pos[0] * size + cur_pos[1]].line_exit_direction = "Down"
+            new_state[next_pos[0] * size + next_pos[1]].line_enter_direction = "Up"
+            possibleStates.append(new_state)
+
+        #return the possibleStates list
+        return possibleStates
+        
+    def solve(self):
+        if(self.selectedAlgorithm == 'BFS'):
+            self.BFS_solve()
+        
     def BFS_solve(self):
         solver = BFS(self.start_state, self.dots_list, self.size)
         self.isSolved, self.solution = solver.solve()
@@ -53,3 +109,43 @@ class Puzzle:
     
     def A_solve(self):
         pass
+
+
+class BFS:
+    def __init__(self, start_state, dots_list, size):
+        self.start_state = start_state
+        self.dots_list = dots_list
+        self.size = size
+        self.solution = list
+        self.node_counter = 0
+
+    def trace_back_solution(self, node: Node):
+        if node is None:
+            return
+        self.trace_back_solution(node.parent)
+        if node.state is not None:
+            self.solution.append(node.state)
+
+    def solve(self):
+        #insert the root node in queue
+        initial_dots_state = [False for i in range(len(self.dots_list))]
+        initial_node = Node(self.start_state, None, initial_dots_state)
+        queue = deque()
+        queue.append(initial_node)
+
+        while queue:
+            #get the first added node (FIFO)
+            current_node = queue.popleft()
+            self.node_counter += 1
+
+            #check if all dots are connected - game is cleared
+            if all(current_node.dotsConnectedState) == True:
+                self.trace_back_solution(current_node)
+                return True, self.solution
+            
+            #generate leaf childs
+            possible_newStates = Puzzle.getPossibleStates(current_node.state, self.dots_list, current_node.dotsConnectedState, self.size)
+            for new_state in possible_newStates:
+                new_dotsConnectedState = current_node.dotsConnectedState.copy()
+                new_node = Node(new_state, current_node, new_dotsConnectedState)
+                queue.append(new_node)

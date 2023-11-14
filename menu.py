@@ -2,6 +2,7 @@ import pygame
 from data import *
 from sprite import *
 from business import *
+from puzzle import Puzzle
 
 class GameMenu:
     def __init__(self, setting_option, stage_number):
@@ -80,27 +81,8 @@ class GameMenu:
         dot_radius = int(tile_length * 0.3)
         tiles_with_dot=info_stage[3]
 
-        #tiles_with_dot = []
-        #tiles_with_dot.append(((0,0), (1,2), Color.RED.value))
-        #tiles_with_dot.append(((2,0), (2,2), Color.YELLOW.value))
-        #tiles_with_dot.append(((4,4), (0,4), Color.BLUE.value))
-
-
         new_board = Board(n_tiles_perRow, tile_length, dot_radius, tiles_with_dot)
-        # new_board.setTileLineDir(0, 0, Direction.Right.value)
-        # new_board.setTileLineDir(0, 1, Direction.Down.value, Direction.Left.value)
-        # new_board.setTileLineDir(1, 1, Direction.Right.value, Direction.Up.value)
-        # new_board.setTileLineDir(1, 2, Direction.Left.value)
-        # new_board.setTileLineColor(0, 0, Color.RED.value)
-        # new_board.setTileLineColor(0, 1, Color.RED.value)
-        # new_board.setTileLineColor(1, 1, Color.RED.value)
-        # new_board.setTileLineColor(1, 2, Color.RED.value)
-        # new_board.setTileLineDir(2, 0, Direction.Right.value)
-        # new_board.setTileLineDir(2, 1, Direction.Right.value, Direction.Left.value)
-        # new_board.setTileLineDir(2, 2, Direction.Left.value)
-        # new_board.setTileLineColor(2, 0, Color.YELLOW.value) 
-        # new_board.setTileLineColor(2, 1, Color.YELLOW.value) 
-        # new_board.setTileLineColor(2, 2, Color.YELLOW.value) 
+        Puzzle(new_board.tiles, new_board.DotTiles, new_board.n_tiles_perRow, algorithm='BFS').solve()
         return new_board
 
     def save_score(self, file_path):

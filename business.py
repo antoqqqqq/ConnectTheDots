@@ -15,6 +15,12 @@ class Tile:
 
     def getDot(self):
         return self.dot
+    
+    def copy(self):
+        result = Tile(self.line_color, self.dot)
+        result.line_enter_direction = self.line_enter_direction
+        result.line_exit_direction = self.line_exit_direction
+        return result
         
 
 class Board:
