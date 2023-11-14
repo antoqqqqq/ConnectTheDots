@@ -175,7 +175,15 @@ class GameMenu:
                         self.resetGame()
                     if(button.getName() == "Home"):
                         self.playing = False
-                    
+                if self.gameClear:
+                    for button in self.button_win:
+                        if(button.isClicked() == False):
+                            continue  
+                        if(button.getName() == "Try again"):
+                            self.resetGame()
+                        if(button.getName() == "Next level"):
+                            gameMenu = GameMenu(0, self.stage_number+1)
+                            gameMenu.run()               
             if event.type == pygame.MOUSEBUTTONUP:
                 self.is_connecting_dot = False
               
@@ -375,16 +383,30 @@ class GameMenu:
     def draw(self):
         self.screen.fill(self.background_color)
         self.sprite_list.draw(self.screen)
-        if self.gameClear:
-            Label(200,200,'congratulation').draw(self.screen)
+
         for button in self.button_list:
-            button.draw(self.screen)
+            button.draw(self.screen)   
         self.draw_board()
-
         if self.gameClear:
-            Label(200, 200, "Congratulation").draw(self.screen)
-
+            self.sprite_win = pygame.sprite.Group()
+            self.sprite_win.add(Sprite(0, 0, "resources/images/congratulation.jpg", self.width, self.height))
+            self.sprite_win.draw(self.screen)
+            
+            Label(200,200,'Highscore in stage '+str(self.stage_number)+': ').draw(self.screen)
+            Label(200,230,'Number of moves  '+str(self.stage_number)).draw(self.screen)
+            Label(200,260,'Number of turns  '+str(self.stage_number)).draw(self.screen)
+            Label(200,290,'Number of times  '+str(self.stage_number)).draw(self.screen)
+            Label(600,200,'Your score :').draw(self.screen)
+            Label(600,230,str(self.stage_number)).draw(self.screen)
+            Label(600,260,str(self.stage_number)).draw(self.screen)
+            Label(600,290,str(self.stage_number)).draw(self.screen)
+            self.button_win=[]
+            self.button_win.append(Button(300,350,'resources/images/right.png','Next level',60,60))
+            self.button_win.append(Button(200,350,'resources/images/reset_btn.png','Try again',60,60))
+            for button in self.button_win:
+                button.draw(self.screen) 
         pygame.display.flip()
+          
 
     def run(self):
         self.playing = True
