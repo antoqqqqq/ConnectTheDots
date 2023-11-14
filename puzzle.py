@@ -1,7 +1,9 @@
 from business import *
 from collections import deque
 from enumaration import DirectionUtil
+from enumaration import Direction
 from node import Node
+import copy
 
 class Puzzle:
     #constructor takes in the starting state
@@ -37,58 +39,110 @@ class Puzzle:
 
         possibleStates = list()
         #traverse to the end of the line
-        cur_pos = dotsPair[0]
+        cur_pos = [pos for pos in dotsPair[0]]
+        
         while state[cur_pos[0] * size + cur_pos[1]].line_exit_direction != None:
-            cur_pos +=  DirectionUtil.getMoveValueFromName(state[cur_pos[0] * size + cur_pos[1]].line_exit_direction)
+            row_offset, col_offset =  DirectionUtil.getMoveValue(state[cur_pos[0] * size + cur_pos[1]].line_exit_direction)
+            cur_pos[0] += row_offset
+            cur_pos[1] += col_offset
+
         #check if it can go left, right, up, or down
         #if yes, add the new state to the possible states list
         move = "Left"
-        next_pos = DirectionUtil.getMoveValueFromName(move)
-        new_state = state.copy()
-        if(state[next_pos[0] * size + next_pos[1]].line_color == None
-           and next_pos[0] >= 0 and next_pos[0] < size and next_pos[1] >= 0 and next_pos[1] < size):
-            new_state[cur_pos[0] * size + cur_pos[1]] = new_state[cur_pos[0] * size + cur_pos[1]].copy()
-            new_state[next_pos[0] * size + next_pos[1]] = new_state[next_pos[0] * size + next_pos[1]].copy()
-            
-            new_state[cur_pos[0] * size + cur_pos[1]].line_exit_direction = "Left"
-            new_state[next_pos[0] * size + next_pos[1]].line_enter_direction = "Right"
-            possibleStates.append(new_state)
+        next_pos = cur_pos.copy()
+        row_offset, col_offset = DirectionUtil.getMoveValueFromName(move)
+        next_pos[0] += row_offset
+        next_pos[1] += col_offset
+        if(next_pos[0] >= 0 and next_pos[0] < size and next_pos[1] >= 0 and next_pos[1] < size
+           and state[next_pos[0] * size + next_pos[1]].line_color == None):
+            if state[next_pos[0] * size + next_pos[1]].dot == None or state[next_pos[0] * size + next_pos[1]].dot.color == dotColor:
+                newDotsConnedtedState = dotsConnectedState.copy()
+                new_state = state.copy()
+                new_state[cur_pos[0] * size + cur_pos[1]] = new_state[cur_pos[0] * size + cur_pos[1]].copy()
+                new_state[next_pos[0] * size + next_pos[1]] = new_state[next_pos[0] * size + next_pos[1]].copy()
+                
+                new_state[cur_pos[0] * size + cur_pos[1]].line_exit_direction = Direction.Left.value
+                new_state[cur_pos[0] * size + cur_pos[1]].line_color = dotColor
+                new_state[next_pos[0] * size + next_pos[1]].line_enter_direction = Direction.Right.value
+                new_state[next_pos[0] * size + next_pos[1]].line_color = dotColor
+
+                if state[next_pos[0] * size + next_pos[1]].dot != None and state[next_pos[0] * size + next_pos[1]].dot.color == dotColor:
+                    newDotsConnedtedState[dotPairIndex] = True
+
+                possibleStates.append((new_state, newDotsConnedtedState))
 
         move = "Right"
-        next_pos = DirectionUtil.getMoveValueFromName(move)
-        new_state = state.copy()
-        if(state[next_pos[0] * size + next_pos[1]].line_color == None
-           and next_pos[0] >= 0 and next_pos[0] < size and next_pos[1] >= 0 and next_pos[1] < size):
-            new_state[cur_pos[0] * size + cur_pos[1]] = new_state[cur_pos[0] * size + cur_pos[1]].copy()
-            new_state[next_pos[0] * size + next_pos[1]] = new_state[next_pos[0] * size + next_pos[1]].copy()
+        # next_pos = DirectionUtil.getMoveValueFromName(move)
+        next_pos = cur_pos.copy()
+        row_offset, col_offset = DirectionUtil.getMoveValueFromName(move)
+        next_pos[0] += row_offset
+        next_pos[1] += col_offset
+        if (next_pos[0] >= 0 and next_pos[0] < size and next_pos[1] >= 0 and next_pos[1] < size
+           and state[next_pos[0] * size + next_pos[1]].line_color == None):
+            if state[next_pos[0] * size + next_pos[1]].dot == None or state[next_pos[0] * size + next_pos[1]].dot.color == dotColor:
+                newDotsConnedtedState = dotsConnectedState.copy()
+                new_state = state.copy()
+                new_state[cur_pos[0] * size + cur_pos[1]] = new_state[cur_pos[0] * size + cur_pos[1]].copy()
+                new_state[next_pos[0] * size + next_pos[1]] = new_state[next_pos[0] * size + next_pos[1]].copy()
 
-            new_state[cur_pos[0] * size + cur_pos[1]].line_exit_direction = "Right"
-            new_state[next_pos[0] * size + next_pos[1]].line_enter_direction = "Left"
-            possibleStates.append(new_state)
+                new_state[cur_pos[0] * size + cur_pos[1]].line_exit_direction = Direction.Right.value
+                new_state[cur_pos[0] * size + cur_pos[1]].line_color = dotColor
+                new_state[next_pos[0] * size + next_pos[1]].line_enter_direction = Direction.Left.value
+                new_state[next_pos[0] * size + next_pos[1]].line_color = dotColor
+
+                if state[next_pos[0] * size + next_pos[1]].dot != None and state[next_pos[0] * size + next_pos[1]].dot.color == dotColor:
+                    newDotsConnedtedState[dotPairIndex] = True
+                
+                possibleStates.append((new_state, newDotsConnedtedState))
+            
 
         move = "Up"
-        next_pos = DirectionUtil.getMoveValueFromName(move)
-        new_state = state.copy()
-        if(state[next_pos[0] * size + next_pos[1]].line_color == None
-           and next_pos[0] >= 0 and next_pos[0] < size and next_pos[1] >= 0 and next_pos[1] < size):
-            new_state[cur_pos[0] * size + cur_pos[1]] = new_state[cur_pos[0] * size + cur_pos[1]].copy()
-            new_state[next_pos[0] * size + next_pos[1]] = new_state[next_pos[0] * size + next_pos[1]].copy()
+        # next_pos = DirectionUtil.getMoveValueFromName(move)
+        next_pos = cur_pos.copy()
+        row_offset, col_offset = DirectionUtil.getMoveValueFromName(move)
+        next_pos[0] += row_offset
+        next_pos[1] += col_offset
+        if(next_pos[0] >= 0 and next_pos[0] < size and next_pos[1] >= 0 and next_pos[1] < size
+           and state[next_pos[0] * size + next_pos[1]].line_color == None):
+            if state[next_pos[0] * size + next_pos[1]].dot == None or state[next_pos[0] * size + next_pos[1]].dot.color == dotColor:
+                newDotsConnedtedState = dotsConnectedState.copy()
+                new_state = state.copy()
+                new_state[cur_pos[0] * size + cur_pos[1]] = new_state[cur_pos[0] * size + cur_pos[1]].copy()
+                new_state[next_pos[0] * size + next_pos[1]] = new_state[next_pos[0] * size + next_pos[1]].copy()
 
-            new_state[cur_pos[0] * size + cur_pos[1]].line_exit_direction = "Up"
-            new_state[next_pos[0] * size + next_pos[1]].line_enter_direction = "Down"
-            possibleStates.append(new_state)
+                new_state[cur_pos[0] * size + cur_pos[1]].line_exit_direction = Direction.Up.value
+                new_state[cur_pos[0] * size + cur_pos[1]].line_color = dotColor
+                new_state[next_pos[0] * size + next_pos[1]].line_enter_direction = Direction.Down.value
+                new_state[next_pos[0] * size + next_pos[1]].line_color = dotColor
+
+                if state[next_pos[0] * size + next_pos[1]].dot != None and state[next_pos[0] * size + next_pos[1]].dot.color == dotColor:
+                    newDotsConnedtedState[dotPairIndex] = True
+
+                possibleStates.append((new_state, newDotsConnedtedState))
 
         move = "Down"
-        next_pos = DirectionUtil.getMoveValueFromName(move)
-        new_state = state.copy()
-        if(state[next_pos[0] * size + next_pos[1]].line_color == None
-           and next_pos[0] >= 0 and next_pos[0] < size and next_pos[1] >= 0 and next_pos[1] < size):
-            new_state[cur_pos[0] * size + cur_pos[1]] = new_state[cur_pos[0] * size + cur_pos[1]].copy()
-            new_state[next_pos[0] * size + next_pos[1]] = new_state[next_pos[0] * size + next_pos[1]].copy()
+        # next_pos = DirectionUtil.getMoveValueFromName(move)
+        next_pos = cur_pos.copy()
+        row_offset, col_offset = DirectionUtil.getMoveValueFromName(move)
+        next_pos[0] += row_offset
+        next_pos[1] += col_offset
+        if(next_pos[0] >= 0 and next_pos[0] < size and next_pos[1] >= 0 and next_pos[1] < size
+           and state[next_pos[0] * size + next_pos[1]].line_color == None):
+            if state[next_pos[0] * size + next_pos[1]].dot == None or state[next_pos[0] * size + next_pos[1]].dot.color == dotColor:
+                newDotsConnedtedState = dotsConnectedState.copy()
+                new_state = state.copy()
+                new_state[cur_pos[0] * size + cur_pos[1]] = new_state[cur_pos[0] * size + cur_pos[1]].copy()
+                new_state[next_pos[0] * size + next_pos[1]] = new_state[next_pos[0] * size + next_pos[1]].copy()
 
-            new_state[cur_pos[0] * size + cur_pos[1]].line_exit_direction = "Down"
-            new_state[next_pos[0] * size + next_pos[1]].line_enter_direction = "Up"
-            possibleStates.append(new_state)
+                new_state[cur_pos[0] * size + cur_pos[1]].line_exit_direction = Direction.Down.value
+                new_state[cur_pos[0] * size + cur_pos[1]].line_color = dotColor
+                new_state[next_pos[0] * size + next_pos[1]].line_enter_direction = Direction.Up.value
+                new_state[next_pos[0] * size + next_pos[1]].line_color = dotColor
+
+                if state[next_pos[0] * size + next_pos[1]].dot != None and state[next_pos[0] * size + next_pos[1]].dot.color == dotColor:
+                        newDotsConnedtedState[dotPairIndex] = True
+
+                possibleStates.append((new_state, newDotsConnedtedState))
 
         #return the possibleStates list
         return possibleStates
@@ -116,7 +170,7 @@ class BFS:
         self.start_state = start_state
         self.dots_list = dots_list
         self.size = size
-        self.solution = list
+        self.solution = list()
         self.node_counter = 0
 
     def trace_back_solution(self, node: Node):
@@ -145,7 +199,6 @@ class BFS:
             
             #generate leaf childs
             possible_newStates = Puzzle.getPossibleStates(current_node.state, self.dots_list, current_node.dotsConnectedState, self.size)
-            for new_state in possible_newStates:
-                new_dotsConnectedState = current_node.dotsConnectedState.copy()
-                new_node = Node(new_state, current_node, new_dotsConnectedState)
+            for new_state, new_dotsState in possible_newStates:
+                new_node = Node(new_state, current_node, new_dotsState)
                 queue.append(new_node)

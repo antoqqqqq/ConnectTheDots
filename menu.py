@@ -35,6 +35,7 @@ class GameMenu:
     def init_all_buttons(self):        
         self.button_list.append(Button(75, 487, "resources/images/home_btn_pink.png", "Home", 56, 56))
         self.button_list.append(Button(168, 487, "resources/images/reset_btn.png", "Reset", 56, 56))
+        self.button_list.append(Button(40, 40, "resources/images/home_btn_pink.png", "Solve", 56, 56))
     def init_all_sprites(self):
         self.sprite_list = pygame.sprite.Group()
         self.sprite_list.add(Sprite(0, 0, "resources/images/background1.jpg", self.width, self.height))
@@ -82,7 +83,8 @@ class GameMenu:
         tiles_with_dot=info_stage[3]
 
         new_board = Board(n_tiles_perRow, tile_length, dot_radius, tiles_with_dot)
-        Puzzle(new_board.tiles, new_board.DotTiles, new_board.n_tiles_perRow, algorithm='BFS').solve()
+        self.puzzle_solver = Puzzle(new_board.tiles, new_board.DotTiles, new_board.n_tiles_perRow, algorithm='BFS')
+
         return new_board
 
     def save_score(self, file_path):
@@ -157,6 +159,8 @@ class GameMenu:
                         self.resetGame()
                     if(button.getName() == "Home"):
                         self.playing = False
+                    if(button.getName() == "Solve"):
+                        self.puzzle_solver.solve()
                     
             if event.type == pygame.MOUSEBUTTONUP:
                 self.is_connecting_dot = False
@@ -300,6 +304,9 @@ class GameMenu:
             self.previous_passed_tile_rc = None
             self.current_held_color = None
             self.start_tile_rc = None
+
+        if self.puzzle_solver.isSolved:
+            self.board.tiles=self.puzzle_solver.solution[-1]
    
     def draw_board(self):
         x_start, y_start = self.board_topLeft[0], self.board_topLeft[1]
