@@ -25,7 +25,7 @@ class GameMenu:
         pygame.init()
         #screen to draw 
         self.screen = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption("Connect the Dots")
+        pygame.display.set_caption("Connect the Dots  - Group 1")
         self.clock = pygame.time.Clock()
         self.init_all_sprites()
         self.button_list = []
@@ -404,11 +404,9 @@ class StageMenu:
 
         #pygame variables
         pygame.init()
-        self.screen = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption("Connect the Dots")
         #screen to draw 
         self.screen = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption("Connect the Dots")
+        pygame.display.set_caption("Connect the Dots - Group 1")
         self.clock = pygame.time.Clock()
 
         self.init_all_sprites()
@@ -541,11 +539,9 @@ class HomeMenu:
 
         #pygame variables
         pygame.init()
-        self.screen = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption("Connect the Dots")
         #screen to draw 
         self.screen = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption("Connect the Dots")
+        pygame.display.set_caption("Connect the Dots - Group 1")
         self.clock = pygame.time.Clock()
 
         self.init_all_sprites()
