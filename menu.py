@@ -2,6 +2,7 @@ import pygame
 from data import *
 from sprite import *
 from business import *
+from puzzle import Puzzle
 
 class GameMenu:
     def __init__(self, setting_option, stage_number):
@@ -25,7 +26,7 @@ class GameMenu:
         pygame.init()
         #screen to draw 
         self.screen = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption("Connect the Dots")
+        pygame.display.set_caption("Connect the Dots  - Group 1")
         self.clock = pygame.time.Clock()
         self.init_all_sprites()
         self.button_list = []
@@ -34,6 +35,7 @@ class GameMenu:
     def init_all_buttons(self):        
         self.button_list.append(Button(75, 487, "resources/images/home_btn_pink.png", "Home", 56, 56))
         self.button_list.append(Button(168, 487, "resources/images/reset_btn.png", "Reset", 56, 56))
+        self.button_list.append(Button(40, 40, "resources/images/home_btn_pink.png", "Solve", 56, 56))
     def init_all_sprites(self):
         self.sprite_list = pygame.sprite.Group()
         self.sprite_list.add(Sprite(0, 0, "resources/images/background1.jpg", self.width, self.height))
@@ -80,27 +82,9 @@ class GameMenu:
         dot_radius = int(tile_length * 0.3)
         tiles_with_dot=info_stage[3]
 
-        #tiles_with_dot = []
-        #tiles_with_dot.append(((0,0), (1,2), Color.RED.value))
-        #tiles_with_dot.append(((2,0), (2,2), Color.YELLOW.value))
-        #tiles_with_dot.append(((4,4), (0,4), Color.BLUE.value))
-
-
         new_board = Board(n_tiles_perRow, tile_length, dot_radius, tiles_with_dot)
-        # new_board.setTileLineDir(0, 0, Direction.Right.value)
-        # new_board.setTileLineDir(0, 1, Direction.Down.value, Direction.Left.value)
-        # new_board.setTileLineDir(1, 1, Direction.Right.value, Direction.Up.value)
-        # new_board.setTileLineDir(1, 2, Direction.Left.value)
-        # new_board.setTileLineColor(0, 0, Color.RED.value)
-        # new_board.setTileLineColor(0, 1, Color.RED.value)
-        # new_board.setTileLineColor(1, 1, Color.RED.value)
-        # new_board.setTileLineColor(1, 2, Color.RED.value)
-        # new_board.setTileLineDir(2, 0, Direction.Right.value)
-        # new_board.setTileLineDir(2, 1, Direction.Right.value, Direction.Left.value)
-        # new_board.setTileLineDir(2, 2, Direction.Left.value)
-        # new_board.setTileLineColor(2, 0, Color.YELLOW.value) 
-        # new_board.setTileLineColor(2, 1, Color.YELLOW.value) 
-        # new_board.setTileLineColor(2, 2, Color.YELLOW.value) 
+        self.puzzle_solver = Puzzle(new_board.tiles, new_board.DotTiles, new_board.n_tiles_perRow, algorithm='BFS')
+
         return new_board
 
     def save_score(self, file_path):
@@ -175,6 +159,8 @@ class GameMenu:
                         self.resetGame()
                     if(button.getName() == "Home"):
                         self.playing = False
+                    if(button.getName() == "Solve"):
+                        self.puzzle_solver.solve()
                     
             if event.type == pygame.MOUSEBUTTONUP:
                 self.is_connecting_dot = False
@@ -318,6 +304,9 @@ class GameMenu:
             self.previous_passed_tile_rc = None
             self.current_held_color = None
             self.start_tile_rc = None
+
+        if self.puzzle_solver.isSolved:
+            self.board.tiles=self.puzzle_solver.solution[-1]
    
     def draw_board(self):
         x_start, y_start = self.board_topLeft[0], self.board_topLeft[1]
@@ -404,11 +393,9 @@ class StageMenu:
 
         #pygame variables
         pygame.init()
-        self.screen = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption("Connect the Dots")
         #screen to draw 
         self.screen = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption("Connect the Dots")
+        pygame.display.set_caption("Connect the Dots - Group 1")
         self.clock = pygame.time.Clock()
 
         self.init_all_sprites()
@@ -541,11 +528,9 @@ class HomeMenu:
 
         #pygame variables
         pygame.init()
-        self.screen = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption("Connect the Dots")
         #screen to draw 
         self.screen = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption("Connect the Dots")
+        pygame.display.set_caption("Connect the Dots - Group 1")
         self.clock = pygame.time.Clock()
 
         self.init_all_sprites()

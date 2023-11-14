@@ -17,6 +17,17 @@ class DirectionUtil:
             return (1, 0)
         elif(moveName == "Up"):
             return (-1, 0)
+        
+    @staticmethod
+    def getMoveValueFromName(direction_name):
+        if(direction_name == "Right"):
+            return (0, 1)
+        elif(direction_name == "Left"):
+            return (0, -1)
+        elif(direction_name == "Down"):
+            return (1, 0)
+        elif(direction_name == "Up"):
+            return (-1, 0)
     
 class Color(Enum):
     RED = (255,0,0)
