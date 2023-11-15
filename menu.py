@@ -30,12 +30,14 @@ class GameMenu:
         self.clock = pygame.time.Clock()
         self.init_all_sprites()
         self.button_list = []
+        self.text_button_list = []
         self.init_all_buttons()
 
     def init_all_buttons(self):        
         self.button_list.append(Button(75, 487, "resources/images/home_btn_pink.png", "Home", 56, 56))
         self.button_list.append(Button(168, 487, "resources/images/reset_btn.png", "Reset", 56, 56))
-        self.button_list.append(Button(40, 40, "resources/images/home_btn_pink.png", "Solve", 56, 56))
+        self.text_button_list.append(TextButton(100, 100, 100, 40, "BFS", font_size=32, color=(7, 102, 173), hover_color=(41, 173, 178), text_color=(197, 232, 152)))
+
     def init_all_sprites(self):
         self.sprite_list = pygame.sprite.Group()
         self.sprite_list.add(Sprite(0, 0, "resources/images/background1.jpg", self.width, self.height))
@@ -159,8 +161,16 @@ class GameMenu:
                         self.resetGame()
                     if(button.getName() == "Home"):
                         self.playing = False
-                    if(button.getName() == "Solve"):
+                    # if(button.getName() == "Solve"):
+                    #     self.puzzle_solver.solve()
+                
+                for text_button in self.text_button_list:
+                    if text_button.click((mouse_x, mouse_y)) == False:
+                        continue
+
+                    if text_button.getButtonText() == "BFS":
                         self.puzzle_solver.solve()
+
                                   
             if event.type == pygame.MOUSEBUTTONUP:
                 self.is_connecting_dot = False
@@ -292,6 +302,10 @@ class GameMenu:
             return
         
     def update(self):
+        mouse_pos = self.get_mouse_pos()
+        for text_button in self.text_button_list:
+            text_button.hover(mouse_pos)
+
         if self.board.IsGameClear():
             self.gameClear=True
             self.button_win=[]
@@ -379,7 +393,9 @@ class GameMenu:
         self.sprite_list.draw(self.screen)
 
         for button in self.button_list:
-            button.draw(self.screen)   
+            button.draw(self.screen)
+        for text_button in self.text_button_list:
+            text_button.draw(self.screen)
         self.draw_board()
         if self.gameClear:
             self.sprite_win = pygame.sprite.Group()

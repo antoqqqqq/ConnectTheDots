@@ -72,3 +72,42 @@ class Button:
     
     def getName(self):
         return self.name
+    
+class TextButton:
+    def __init__(self, x, y, width, height, text, font_size=30, color=(252, 245, 237), hover_color=(255,255,255), text_color=(255,255,255)):
+        self.x = x
+        self.y = y
+        self.width = width
+        self.height = height
+        self.text = text
+        self.font_size = font_size
+        self.color = color
+        self.hover_color = hover_color
+        self.text_color = text_color
+        self.is_hovered = False
+
+    def draw(self, screen):
+        if self.is_hovered:
+            pygame.draw.rect(screen, self.hover_color, (self.x, self.y, self.width, self.height))
+        else:
+            pygame.draw.rect(screen, self.color, (self.x, self.y, self.width, self.height))
+
+        font = pygame.font.Font(None, self.font_size)
+        text_surface = font.render(self.text, 1, self.text_color)
+
+        # Tính toán vị trí để căn giữa văn bản trong hình chữ nhật
+        text_x = self.x + (self.width - text_surface.get_width()) // 2
+        text_y = self.y + (self.height - text_surface.get_height()) // 2
+
+        screen.blit(text_surface, (text_x, text_y))
+
+    def click(self, pos):
+        x, y = pos
+        return self.x < x < self.x + self.width and self.y < y < self.y + self.height
+
+    def hover(self, pos):
+        x, y = pos
+        self.is_hovered = self.x < x < self.x + self.width and self.y < y < self.y + self.height
+
+    def getButtonText(self):
+        return self.text
