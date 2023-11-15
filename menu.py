@@ -469,7 +469,7 @@ class StageMenu:
         self.button_list.append(Button(559, 344, "resources/images/Level_04.png", "Level 9", scaler = 0.3))
         self.button_list.append(Button(715, 344, "resources/images/Level_05.png", "Level 10", scaler = 0.3))
 
-        self.button_list.append(Button(102, 516, "resources/images/Level_01.png", "Level 10", scaler = 0.3))
+        self.button_list.append(Button(102, 516, "resources/images/Level_01.png", "Level 11", scaler = 0.3))
         self.button_list.append(Button(247, 516, "resources/images/Level_02.png", "Level 10", scaler = 0.3))
         self.button_list.append(Button(403, 516, "resources/images/Level_03.png", "Level 10", scaler = 0.3))
         self.button_list.append(Button(559, 516, "resources/images/Level_04.png", "Level 10", scaler = 0.3))
@@ -531,6 +531,9 @@ class StageMenu:
                         gameMenu.run()
                     if(button.getName() == "Level 10"):
                         gameMenu = GameMenu(0, 10)
+                        gameMenu.run()
+                    if(button.getName() == "Level 11"):
+                        gameMenu = GameMenu(0, 11)
                         gameMenu.run()
 
     def update(self):
