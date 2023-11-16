@@ -3,6 +3,7 @@ from data import *
 from sprite import *
 from business import *
 from puzzle import Puzzle
+import threading
 
 class GameMenu:
     def __init__(self, setting_option, stage_number):
@@ -518,6 +519,9 @@ class StageMenu:
         self.text_button_list.append(TextButton(50 + 410, 503, 83, 54, "Level 13", font_size = 25,color=(85, 124, 85), hover_color=(250, 112, 112), text_color=(250, 112, 112)))
         self.text_button_list.append(TextButton(50 + 556, 503, 83, 54, "Level 14", font_size = 25,color=(85, 124, 85), hover_color=(250, 112, 112), text_color=(250, 112, 112)))
         self.text_button_list.append(TextButton(50 + 702, 503, 83, 54, "Level 15", font_size = 25,color=(85, 124, 85), hover_color=(250, 112, 112), text_color=(250, 112, 112)))
+
+        self.text_button_list.append(TextButton(750, 0, 150, 100, "Go Back", font_size = 35,color=(25, 38, 85), hover_color=(225, 170, 116), text_color=(225, 170, 116)))
+
       
     def drawInitalMenu(self):
         self.draw()
@@ -538,7 +542,9 @@ class StageMenu:
                 for button in self.text_button_list:
                     if(button.click(self.get_mouse_pos()) == False):
                         continue
-
+                    
+                    if(button.getButtonText()) == "Go Back":
+                        self.playing = False
                     if(button.getButtonText() == "Level 1"):
                         gameMenu = GameMenu(0, 1)
                         gameMenu.run()
@@ -697,7 +703,7 @@ class HomeMenu:
     
     def draw_labels(self):
         Label(600, 25, "NHÓM 1", font_size= 40, color = (0,0,0)).draw(self.screen)
-        Label(450, 70, "Dương Đức Khải 21110810", font_size= 30, color = (0,0,0)).draw(self.screen)
+        Label(450, 70, "Dương Đức Khải 21110775", font_size= 30, color = (0,0,0)).draw(self.screen)
         Label(450, 120, "Tô Đức AN 21110810", font_size= 30, color = (0,0,0)).draw(self.screen)
         Label(450, 170, "Trần Hữu Tuấn 21110810", font_size= 30, color = (0,0,0)).draw(self.screen)
 
