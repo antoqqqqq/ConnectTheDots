@@ -1,10 +1,10 @@
 from menu import *
 
-#GameMenu = GameMenu(0,0)
-#GameMenu.run()
+game = GameMenu(0,0)
+game.run()
 
-StageMenu = StageMenu(0)
-StageMenu.run()
+# HomeMenu = HomeMenu(0)
+# HomeMenu.run()
 
-#HomeMenu = HomeMenu(0)
-#HomeMenu.run()
+# StageMenu = StageMenu(0)
+# StageMenu.run()

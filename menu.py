@@ -27,19 +27,34 @@ class GameMenu:
         pygame.display.set_caption("Connect the Dots")
         self.clock = pygame.time.Clock()
         self.init_all_sprites()
-        self.button_list = []
-        self.init_all_buttons()
+        # self.button_list = []
+        # self.init_all_buttons()
 
-    def init_all_buttons(self):        
-        self.button_list.append(Button(75, 487, "resources/images/home_btn_pink.png", "Home", 56, 56))
-        self.button_list.append(Button(168, 487, "resources/images/reset_btn.png", "Reset", 56, 56))
+    # def init_all_buttons(self):        
+    #     self.button_list.append(Button(75, 487, "resources/images/home_btn_pink.png", "Home", 56, 56))
+    #     self.button_list.append(Button(168, 487, "resources/images/reset_btn.png", "Reset", 56, 56))
+        #self.button_list.append(Button(37,300),"CHANGE ALGORITHM")
+
     def init_all_sprites(self):
         self.sprite_list = pygame.sprite.Group()
         self.sprite_list.add(Sprite(0, 0, "resources/images/background1.jpg", self.width, self.height))
-        self.sprite_list.add(Sprite(37, 37, "resources/images/green_box.png", 225, 187))
-        self.sprite_list.add(Sprite(56, 243, "resources/images/pink_box.png", 187, 56))
-        self.sprite_list.add(Sprite(56, 318, "resources/images/red_box.png", 187, 56))
-        self.sprite_list.add(Sprite(56, 393, "resources/images/blue_box.png", 187, 56))
+
+    # def draw_labels(self):
+    #     pass
+
+    def draw_TextButton(self):
+        TextButton(186, 31, 100, 80, "Solve", font_size = 20,color=(255,0,255), hover_color=(255, 255, 255)).draw(self.screen)
+        TextButton(22, 31, 100, 80, "Change", font_size = 20,color=(255,0,255), hover_color=(255, 255, 255)).draw(self.screen)
+
+        TextButton(22, 461, 100, 80, "Home", font_size = 20,color=(255,0,255), hover_color=(255, 255, 255)).draw(self.screen)
+        TextButton(186, 461, 100, 80, "Reset", font_size = 20,color=(255,0,255), hover_color=(255, 255, 255)).draw(self.screen)
+
+        TextButton(52, 127, 207, 31, "Selectd Algorithm:", font_size = 20,color=(255,0,255), hover_color=(255, 255, 255)).draw(self.screen)
+        TextButton(73, 174, 164, 55, "Level:", font_size = 20,color=(255,0,255), hover_color=(255, 255, 255)).draw(self.screen)
+        TextButton(39, 238, 103, 189, "Curent", font_size = 20,color=(255,0,255), hover_color=(255, 255, 255)).draw(self.screen)
+        TextButton(175, 238, 103, 189, "Best", font_size = 20,color=(255,0,255), hover_color=(255, 255, 255)).draw(self.screen)
+
+
         
     def get_setting_config(self, setting_option):
         width = 900
@@ -68,27 +83,7 @@ class GameMenu:
         dot_radius = int(tile_length * 0.3)
         tiles_with_dot=info_stage[3]
 
-        #tiles_with_dot = []
-        #tiles_with_dot.append(((0,0), (1,2), Color.RED.value))
-        #tiles_with_dot.append(((2,0), (2,2), Color.YELLOW.value))
-        #tiles_with_dot.append(((4,4), (0,4), Color.BLUE.value))
-
-
         new_board = Board(n_tiles_perRow, tile_length, dot_radius, tiles_with_dot)
-        # new_board.setTileLineDir(0, 0, Direction.Right.value)
-        # new_board.setTileLineDir(0, 1, Direction.Down.value, Direction.Left.value)
-        # new_board.setTileLineDir(1, 1, Direction.Right.value, Direction.Up.value)
-        # new_board.setTileLineDir(1, 2, Direction.Left.value)
-        # new_board.setTileLineColor(0, 0, Color.RED.value)
-        # new_board.setTileLineColor(0, 1, Color.RED.value)
-        # new_board.setTileLineColor(1, 1, Color.RED.value)
-        # new_board.setTileLineColor(1, 2, Color.RED.value)
-        # new_board.setTileLineDir(2, 0, Direction.Right.value)
-        # new_board.setTileLineDir(2, 1, Direction.Right.value, Direction.Left.value)
-        # new_board.setTileLineDir(2, 2, Direction.Left.value)
-        # new_board.setTileLineColor(2, 0, Color.YELLOW.value) 
-        # new_board.setTileLineColor(2, 1, Color.YELLOW.value) 
-        # new_board.setTileLineColor(2, 2, Color.YELLOW.value) 
         return new_board
 
     def save_score(self, file_path):
@@ -302,8 +297,8 @@ class GameMenu:
         rect_length = tile_length * 0.5
 
         #draw the the Board's top and left sides
-        pygame.draw.line(self.screen, Color.BLACK.value, (x_start, y_start), (x_start + board_length, y_start), width=border_width)
-        pygame.draw.line(self.screen, Color.BLACK.value, (x_start, y_start), (x_start, y_start + board_length), width=border_width)
+        pygame.draw.line(self.screen, Color.SILVER.value, (x_start, y_start), (x_start + board_length, y_start), width=border_width)
+        pygame.draw.line(self.screen, Color.SILVER.value, (x_start, y_start), (x_start, y_start + board_length), width=border_width)
 
         y = y_start
         
@@ -313,8 +308,8 @@ class GameMenu:
             for c in range(self.board.n_tiles_perRow):
                 x += tile_length
                 #draw Tiles right and bottom sides
-                pygame.draw.line(self.screen, Color.BLACK.value, (x, y - tile_length), (x, y), width=border_width)
-                pygame.draw.line(self.screen, Color.BLACK.value, (x - tile_length, y), (x, y), width=border_width)
+                pygame.draw.line(self.screen, Color.SILVER.value, (x, y - tile_length), (x, y), width=border_width)
+                pygame.draw.line(self.screen, Color.SILVER.value, (x - tile_length, y), (x, y), width=border_width)
 
                 #draw Dot
                 if(self.board.getTileDot(r, c) != None):
@@ -348,9 +343,11 @@ class GameMenu:
     def draw(self):
         self.screen.fill(self.background_color)
         self.sprite_list.draw(self.screen)
-        for button in self.button_list:
-            button.draw(self.screen)
+        # self.draw_labels()
+        # for button in self.button_list:
+        #     button.draw(self.screen)
         self.draw_board()
+        self.draw_TextButton()
         pygame.display.flip()
 
     def run(self):
@@ -365,7 +362,7 @@ class StageMenu:
     def __init__(self, setting_option):
         self.setting_option = setting_option
         self.width, self.height, self.board_width, self.board_height = self.get_setting_config(setting_option)
-        self.background_color = (102,205,170)
+        self.background_color = (220,220,220)
 
         #pygame variables
         pygame.init()
@@ -376,7 +373,7 @@ class StageMenu:
         pygame.display.set_caption("Connect the Dots")
         self.clock = pygame.time.Clock()
 
-        self.init_all_sprites()
+        # self.init_all_sprites()
         self.button_list = []
         self.init_all_buttons()
 
@@ -395,30 +392,11 @@ class StageMenu:
 
         return width, height, board_width, board_height
     def init_all_buttons(self):        
-        self.button_list.append(Button(102, 172, "resources/images/Level_01.png", "Home", scaler = 0.3))
-        self.button_list.append(Button(247, 172, "resources/images/Level_02.png", "Home", scaler = 0.3))
-        self.button_list.append(Button(403, 172, "resources/images/Level_03.png", "Home", scaler = 0.3))
-        self.button_list.append(Button(559, 172, "resources/images/Level_04.png", "Home", scaler = 0.3))
-        self.button_list.append(Button(715, 172, "resources/images/Level_05.png", "Home", scaler = 0.3))
-
-        self.button_list.append(Button(102, 344, "resources/images/Level_01.png", "Home", scaler =0.3))
-        self.button_list.append(Button(247, 344, "resources/images/Level_02.png", "Home", scaler = 0.3))
-        self.button_list.append(Button(403, 344, "resources/images/Level_03.png", "Home", scaler = 0.3))
-        self.button_list.append(Button(559, 344, "resources/images/Level_04.png", "Home", scaler = 0.3))
-        self.button_list.append(Button(715, 344, "resources/images/Level_05.png", "Home", scaler = 0.3))
-
-        self.button_list.append(Button(102, 516, "resources/images/Level_01.png", "Home", scaler = 0.3))
-        self.button_list.append(Button(247, 516, "resources/images/Level_02.png", "Home", scaler = 0.3))
-        self.button_list.append(Button(403, 516, "resources/images/Level_03.png", "Home", scaler = 0.3))
-        self.button_list.append(Button(559, 516, "resources/images/Level_04.png", "Home", scaler = 0.3))
-        self.button_list.append(Button(715, 516, "resources/images/Level_05.png", "Home", scaler = 0.3))
+        self.button_list.append(Button(0, 0, "resources/images/background5.jpg", "Home", width= 900, height=600))
 
     def init_all_sprites(self):
-        self.sprite_list = pygame.sprite.Group()
-        self.sprite_list.add(Sprite(0, 0, "resources/images/background5.jpg", self.width, self.height))
-        self.sprite_list.add(Sprite(32, 85, "resources/images/BASIC0.png", scaler=0.5))
-        self.sprite_list.add(Sprite(39, 258, "resources/images/SPECIAL0.png", scaler=0.5))
-        self.sprite_list.add(Sprite(39, 430, "resources/images/DAILY0.png", scaler=0.5))
+        pass
+
 
     def get_mouse_pos(self):
         x, y = pygame.mouse.get_pos()
@@ -446,16 +424,42 @@ class StageMenu:
     def update(self):
         pass
     def draw_labels(self):
-        Label(250, 0, "Stage Menu", font_size= 80, color = (51, 51, 255)).draw(self.screen)
+        Label(280, 0, "StageGame", font_size= 80, color = (0,128,0)).draw(self.screen)
 
+    def draw_Textbutton(self):
+      TextButton(34, 77, 100, 80, "BASIC", font_size = 20,color=(128,128,128), hover_color=(255, 255, 255)).draw(self.screen)
+      TextButton(34, 242, 100, 80, "SEPCIAL", font_size = 20,color=(0,255,0), hover_color=(255, 255, 255)).draw(self.screen)
+      TextButton(34, 407, 100, 80, "DAILY", font_size = 20,color=(0,255,0), hover_color=(255, 255, 255)).draw(self.screen)
+
+      TextButton(118, 172, 83, 54, "Level 1", font_size = 15,color=(0,255,0), hover_color=(255, 255, 255)).draw(self.screen)
+      TextButton(264, 172, 83, 54, "Level 2", font_size = 15,color=(0,255,0), hover_color=(255, 255, 255)).draw(self.screen)
+      TextButton(410, 172, 83, 54, "Level 3", font_size = 15,color=(0,255,0), hover_color=(255, 255, 255)).draw(self.screen)
+      TextButton(556, 172, 83, 54, "Level 4", font_size = 15,color=(0,255,0), hover_color=(255, 255, 255)).draw(self.screen)
+      TextButton(702, 172, 83, 54, "Level 5", font_size = 15,color=(0,255,0), hover_color=(255, 255, 255)).draw(self.screen)
+
+      TextButton(118, 338, 83, 54, "Level 1", font_size = 15,color=(0,255,0), hover_color=(255, 255, 255)).draw(self.screen)
+      TextButton(264, 338, 83, 54, "Level 2", font_size = 15,color=(0,255,0), hover_color=(255, 255, 255)).draw(self.screen)
+      TextButton(410, 338, 83, 54, "Level 3", font_size = 15,color=(0,255,0), hover_color=(255, 255, 255)).draw(self.screen)
+      TextButton(556, 338, 83, 54, "Level 4", font_size = 15,color=(0,255,0), hover_color=(255, 255, 255)).draw(self.screen)
+      TextButton(702, 338, 83, 54, "Level 5", font_size = 15,color=(0,255,0), hover_color=(255, 255, 255)).draw(self.screen)
+
+      TextButton(118, 503, 83, 54, "Level 1", font_size = 15,color=(0,255,0), hover_color=(255, 255, 255)).draw(self.screen)
+      TextButton(264, 503, 83, 54, "Level 2", font_size = 15,color=(0,255,0), hover_color=(255, 255, 255)).draw(self.screen)
+      TextButton(410, 503, 83, 54, "Level 3", font_size = 15,color=(0,255,0), hover_color=(255, 255, 255)).draw(self.screen)
+      TextButton(556, 503, 83, 54, "Level 4", font_size = 15,color=(0,255,0), hover_color=(255, 255, 255)).draw(self.screen)
+      TextButton(702, 503, 83, 54, "Level 5", font_size = 15,color=(0,255,0), hover_color=(255, 255, 255)).draw(self.screen)
+
+      
+      
     def draw(self):
         self.screen.fill(self.background_color)
         #self.draw_labels()
-        self.sprite_list.draw(self.screen)
+        # self.sprite_list.draw(self.screen)
         for button in self.button_list:
             button.draw(self.screen)
         #self.sprite_list.draw(self.screen)
         self.draw_labels()
+        self.draw_Textbutton()
 
         pygame.display.flip()
     
@@ -472,7 +476,7 @@ class HomeMenu:
     def __init__(self, setting_option):
         self.setting_option = setting_option
         self.width, self.height, self.board_width, self.board_height = self.get_setting_config(setting_option)
-        self.background_color = (255,255,255)
+        self.background_color = (255,222,173)
 
         #pygame variables
         pygame.init()
@@ -483,7 +487,7 @@ class HomeMenu:
         pygame.display.set_caption("Connect the Dots")
         self.clock = pygame.time.Clock()
 
-        self.init_all_sprites()
+        # self.init_all_sprites()
         self.button_list = []
         self.init_all_buttons()
 
@@ -501,15 +505,6 @@ class HomeMenu:
             pass
 
         return width, height, board_width, board_height
-    def init_all_buttons(self):        
-          self.button_list.append(Button(150, 450, "resources/images/BASIC0.png", "Home", scaler = 1))
-          self.button_list.append(Button(380, 450, "resources/images/SPECIAL0.png", "Home", scaler = 1))
-          self.button_list.append(Button(600, 450, "resources/images/DAILY0.png", "Home", scaler = 1))
-          self.button_list.append(Button(350, 200, "resources/images/Level_04.png", "Home", scaler = 1))
-
-    def init_all_sprites(self):
-        self.sprite_list = pygame.sprite.Group()
-        self.sprite_list.add(Sprite(0, 0, "resources/images/background5.jpg", self.width, self.height))
 
     def get_mouse_pos(self):
         x, y = pygame.mouse.get_pos()
@@ -536,20 +531,38 @@ class HomeMenu:
 
     def update(self):
         pass
+
+    def init_all_buttons(self):        
+        self.button_list.append(Button(0, 0, "resources/images/Logo.png", "Logo", scaler=0.08))
+
+
     def draw_labels(self):
-        Label(250, 40, "L", font_size= 150, color = (255,0,0)).draw(self.screen)
-        Label(350, 40, "I", font_size= 150, color = (0,255,0)).draw(self.screen)
-        Label(450, 40, "N", font_size= 150, color = (255,255,0)).draw(self.screen)
-        Label(550, 40, "K", font_size= 150, color = (0,0,255)).draw(self.screen)
-        Label(250, 400, "CHOOSE CATEGORY AND LEVEL", font_size= 30, color = (255,0,0)).draw(self.screen)
+        Label(600, 25, "NHÓM 1", font_size= 40, color = (0,0,0)).draw(self.screen)
+        Label(450, 70, "Dương Đức Khải 21110810", font_size= 30, color = (0,0,0)).draw(self.screen)
+        Label(450, 120, "Tô Đức AN 21110810", font_size= 30, color = (0,0,0)).draw(self.screen)
+        Label(450, 170, "Trần Hữu Tuấn 21110810", font_size= 30, color = (0,0,0)).draw(self.screen)
+
+        Label(110, 10, "Trường Đại Học", font_size= 15, color = (0,191,255)).draw(self.screen)
+        Label(110, 30, "Sư Phạm Kỹ Thuật Thành Phố HCM", font_size= 20, color = (0,0,255)).draw(self.screen)
+        Label(110, 60, "HCMC Univercity of Technology and Education", font_size= 10, color = (210,105,30)).draw(self.screen)
+
+        Label(270, 331, "LINK GAME", font_size= 80, color = (0,0,0)).draw(self.screen)
+
+        Label(20, 150, "Final Projects", font_size= 20, color = (65,105,225)).draw(self.screen)
+        Label(30, 180, "Giáo Viên Hướng Dẫn", font_size= 30, color = (30,144,255)).draw(self.screen)
+        Label(50, 230, "Hoàng Văn Dũng", font_size= 40, color = (0,0,255)).draw(self.screen)
+
+    def draw_TextButton(self):
+      TextButton(220, 434, 200, 125, "PLAY GAME", font_size = 45,color=(0, 0, 0), hover_color=(255, 255, 255)).draw(self.screen)
+      TextButton(506, 434, 200, 125, "QUITE GAME", font_size = 45,color=(0, 0, 0), hover_color=(255, 255, 255)).draw(self.screen)
+
 
     def draw(self):
         self.screen.fill(self.background_color)
-        self.draw_labels()
-        self.sprite_list.draw(self.screen)
         for button in self.button_list:
             button.draw(self.screen)
         self.draw_labels()
+        self.draw_TextButton()
 
         pygame.display.flip()
     
@@ -560,11 +573,3 @@ class HomeMenu:
             self.event()
             self.update()
             self.draw()
-# class Button:
-#      def __init__(self, color, x,y,width,height, text=''):
-#         self.color = color
-#         self.x = x
-#         self.y = y
-#         self.width = width
-#         self.height = height
-#         self.text = text
