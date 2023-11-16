@@ -3,7 +3,8 @@ from data import *
 from sprite import *
 from business import *
 from puzzle import Puzzle
-import threading
+from threading import *
+import time
 
 class GameMenu:
     def __init__(self, setting_option, stage_number):
@@ -118,7 +119,6 @@ class GameMenu:
         return x, y
     
     def create_game(self, stage_number):
-        #info_stage=[int(stage),int(n_tiles_perRow),int(number_node),tiles_with_dot]
         info_stage=read_stage('resources/level/level'+str(stage_number)+'.txt')
         n_tiles_perRow=info_stage[1]
         tile_length = self.board_length / n_tiles_perRow
@@ -127,7 +127,7 @@ class GameMenu:
 
         new_board = Board(n_tiles_perRow, tile_length, dot_radius, tiles_with_dot)
         self.puzzle_solver = Puzzle(new_board.tiles, new_board.DotTiles, new_board.n_tiles_perRow, algorithm='BFS')
-
+        self.beginTime = round(time.time(), 3)
         return new_board
 
     def save_score(self, file_path):
@@ -210,6 +210,7 @@ class GameMenu:
 
                     if text_button.getButtonText() == "Solve":
                         self.puzzle_solver.selectedAlgorithm = self.selectedAlgorithm
+                        self.startAlgorithmTime = time.time()
                         self.puzzle_solver.solve()
 
                     if(text_button.getButtonText() == "Reset"):
@@ -369,9 +370,13 @@ class GameMenu:
             self.previous_passed_tile_rc = None
             self.current_held_color = None
             self.start_tile_rc = None
-                            
-        if self.puzzle_solver.isSolved:
+
+        if self.gameClear == False:
+            self.cur_num_time = round(time.time() - self.beginTime, 3)
+
+        if self.puzzle_solver.isSolved and self.gameClear == False:
             self.board.tiles=self.puzzle_solver.solution[-1]
+            self.cur_num_time = round(time.time() - self.startAlgorithmTime, 3)
    
     def draw_board(self):
         x_start, y_start = self.board_topLeft[0], self.board_topLeft[1]
