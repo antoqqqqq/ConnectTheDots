@@ -3,21 +3,28 @@ from data import *
 from sprite import *
 from business import *
 from puzzle import Puzzle
+from threading import *
+import time
 
 class GameMenu:
     def __init__(self, setting_option, stage_number):
         self.setting_option = setting_option
         self.width, self.height, self.board_length = self.get_setting_config(setting_option)
-        self.background_color = (77, 77, 77)
+        self.background_color = (85, 88, 67)
         self.stage_number = stage_number
         self.board_topLeft = [350, 37]
         self.board_border = 5
         self.board = self.create_game(self.stage_number)
         self.gameClear = False
-        highest_score = readfile('resources/score/level'+str(self.stage_number)+ '.txt')
-        self.best_num_moves=highest_score[0][1]
-        self.best_num_turns=highest_score[0][2]
-        self.best_num_times=highest_score[0][3]
+        self.best_num_moves = 0
+        self.best_num_turn  = 0
+        self.best_num_time = 0
+        #self.get_score()
+        self.cur_num_moves = 0
+        self.cur_num_turn  = 0
+        self.cur_num_time = 0
+
+        self.go_to_next_stage = False
 
         #variables for processing user mouse inputs on board    
         self.is_connecting_dot = False
@@ -34,23 +41,51 @@ class GameMenu:
         self.clock = pygame.time.Clock()
         self.init_all_sprites()
         self.button_list = []
+        self.text_button_list = []
+        self.button_win= []
         self.init_all_buttons()
+        self.selectedAlgorithm = "BFS"
 
     def init_all_buttons(self):        
-        self.button_list.append(Button(75, 487, "resources/images/home_btn_pink.png", "Home", 56, 56))
-        self.button_list.append(Button(168, 487, "resources/images/reset_btn.png", "Reset", 56, 56))
-        self.button_list.append(Button(40, 40, "resources/images/home_btn_pink.png", "Solve", 56, 56))
-    def init_all_sprites(self):
-        self.sprite_list = pygame.sprite.Group()
-        self.sprite_list.add(Sprite(0, 0, "resources/images/background1.jpg", self.width, self.height))
-        self.sprite_list.add(Sprite(37, 37, "resources/images/green_box.png", 225, 187))
-        self.sprite_list.add(Sprite(56, 243, "resources/images/pink_box.png", 187, 56))
-        self.sprite_list.add(Sprite(56, 318, "resources/images/red_box.png", 187, 56))
-        self.sprite_list.add(Sprite(56, 393, "resources/images/blue_box.png", 187, 56))
+        self.init_all_text_buttons()
+
+    def init_all_text_buttons(self):
+        self.text_button_list.append(TextButton(175, 31, 100, 80 - 30, "Solve", font_size = 28,color=(245, 238, 200), hover_color=(0, 21, 36), text_color=(0, 21, 36)))
+        self.text_button_list.append(TextButton(39, 31, 100, 80 - 30, "Change", font_size = 28,color=(245, 238, 200), hover_color=(0, 21, 36), text_color=(0, 21, 36)))
+        self.text_button_list.append(TextButton(39, 461 + 40, 100, 80, "Home", font_size = 35,color=(245, 238, 200), hover_color=(0, 21, 36), text_color=(0, 21, 36)))
+        self.text_button_list.append(TextButton(175, 461 + 40, 100, 80, "Reset", font_size = 35,color=(245, 238, 200), hover_color=(0, 21, 36), text_color=(0, 21, 36)))
 
     def drawInitalMenu(self):
         self.draw()
 
+    def init_all_sprites(self):
+        self.sprite_list = pygame.sprite.Group()
+        #self.sprite_list.add(Sprite(0, 0, "resources/images/background1.jpg", self.width, self.height))
+
+    def draw_TextButton(self):
+        TextButton(39, 174, 236, 70, "LEVEL " + str(self.stage_number), font_size = 50,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(134, 10, 53)).draw(self.screen)
+        TextButton(39, 238 + 40, 103, 189, "", font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255)).draw(self.screen)
+        TextButton(39, 238 + 65, 103, 0, "Current", font_size = 27,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(25, 38, 85)).draw(self.screen)
+        TextButton(39, 238 + 100, 103, 0, "Move", font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
+        TextButton(39, 238 + 120, 103, 0, str(self.cur_num_moves), font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
+        TextButton(39, 238 + 145, 103, 0, "Turns", font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
+        TextButton(39, 238 + 165, 103, 0, str(self.cur_num_turn), font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
+        TextButton(39, 238 + 190, 103, 0, "Time", font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
+        TextButton(39, 238 + 210, 103, 0, str(self.cur_num_time), font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
+
+        TextButton(175, 238 + 40, 103, 189, "", font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255)).draw(self.screen)
+        TextButton(175, 238 + 65, 103, 0, "Best", font_size = 27,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(25, 38, 85)).draw(self.screen)
+        TextButton(175, 238 + 100, 103, 0, "Move", font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
+        TextButton(175, 238 + 120, 103, 0, str(self.best_num_moves), font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
+        TextButton(175, 238 + 145, 103, 0, "Turns", font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
+        TextButton(175, 238 + 165, 103, 0, str(self.best_num_turn), font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
+        TextButton(175, 238 + 190, 103, 0, "Time", font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
+        TextButton(175, 238 + 210, 103, 0, str(self.best_num_time), font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
+        TextButton(39, 100, 236, 50, "Algorithm: " + self.selectedAlgorithm, font_size = 28,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
+
+        for button in self.text_button_list:
+            button.draw(self.screen)
+  
     def get_setting_config(self, setting_option):
         width = 900
         height = 600
@@ -66,6 +101,11 @@ class GameMenu:
         return width, height, board_length
 
     def resetGame(self):
+        self.cur_num_moves = 0
+        self.cur_num_turn  = 0
+        self.cur_num_time = 0
+
+        self.button_win=[]
         self.board = self.create_game(self.stage_number)
         self.gameClear = False
         self.is_connecting_dot = False
@@ -79,7 +119,6 @@ class GameMenu:
         return x, y
     
     def create_game(self, stage_number):
-        #info_stage=[int(stage),int(n_tiles_perRow),int(number_node),tiles_with_dot]
         info_stage=read_stage('resources/level/level'+str(stage_number)+'.txt')
         n_tiles_perRow=info_stage[1]
         tile_length = self.board_length / n_tiles_perRow
@@ -88,7 +127,7 @@ class GameMenu:
 
         new_board = Board(n_tiles_perRow, tile_length, dot_radius, tiles_with_dot)
         self.puzzle_solver = Puzzle(new_board.tiles, new_board.DotTiles, new_board.n_tiles_perRow, algorithm='BFS')
-
+        self.beginTime = round(time.time(), 3)
         return new_board
 
     def save_score(self, file_path):
@@ -107,9 +146,9 @@ class GameMenu:
         i=0
         for row in data:
             if (self.stage_number == row[0]):
-                self.num_moves = data[i][1]
-                self.num_turn  = data[i][2]
-                self.num_time  = data[i][3]
+                self.best_num_moves = data[i][1]
+                self.best_num_turn  = data[i][2]
+                self.best_num_time  = data[i][3]
                 break
             i=+1
 
@@ -147,7 +186,7 @@ class GameMenu:
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 mouse_x, mouse_y = self.get_mouse_pos()
-                if(self.is_connecting_dot == False):
+                if(self.is_connecting_dot == False and self.gameClear == False):
                     if self.cursor_in_Board(mouse_x, mouse_y):
                         r, c = self.get_Tile_pos(mouse_x, mouse_y)
                         if(self.board.getTileDot(r, c) != None):
@@ -155,16 +194,30 @@ class GameMenu:
                             self.current_held_color = self.board.getTileDot(r, c).color  
                             self.start_tile_rc = [r, c]
 
-                for button in self.button_list:
-                    if(button.isClicked() == False):
+                if self.gameClear:
+                    for button in self.button_win:
+                        if(button.click(self.get_mouse_pos()) == False):
+                            continue  
+                        if(button.getButtonText() == "Try Again"):
+                            self.resetGame()
+                        if(button.getButtonText() == "Next Level"):
+                            self.playing = False
+                            self.go_to_next_stage = True
+
+                for text_button in self.text_button_list:
+                    if text_button.click((mouse_x, mouse_y)) == False:
                         continue
 
-                    if(button.getName() == "Reset"):
-                        self.resetGame()
-                    if(button.getName() == "Home"):
-                        self.playing = False
-                    if(button.getName() == "Solve"):
+                    if text_button.getButtonText() == "Solve":
+                        self.puzzle_solver.selectedAlgorithm = self.selectedAlgorithm
+                        self.startAlgorithmTime = time.time()
                         self.puzzle_solver.solve()
+
+                    if(text_button.getButtonText() == "Reset"):
+                        self.resetGame()
+                    if(text_button.getButtonText() == "Home"):
+                        self.playing = False
+
                                   
             if event.type == pygame.MOUSEBUTTONUP:
                 self.is_connecting_dot = False
@@ -296,12 +349,18 @@ class GameMenu:
             return
         
     def update(self):
-        if self.board.IsGameClear():
+        mouse_pos = self.get_mouse_pos()
+        for text_button in self.text_button_list:
+            text_button.hover(mouse_pos)
+
+        if self.board.IsGameClear() and self.gameClear == False:
             self.gameClear=True
-            self.button_win=[]
-            self.button_win.append(Button(300,350,'resources/images/right.png','Next level',60,60))
-            self.button_win.append(Button(200,350,'resources/images/reset_btn.png','Try again',60,60))
-          
+            self.button_win.append(TextButton(250, 375, 150, 100, "Next Level"))
+            self.button_win.append(TextButton(500, 375, 150, 100, "Try Again"))
+        elif self.gameClear:
+            for button in self.button_win:
+                button.hover(self.get_mouse_pos())
+
         if self.is_connecting_dot:
             mouse_x, mouse_y = self.get_mouse_pos()
             pressed_Tile_pos = self.get_Tile_pos(mouse_x, mouse_y)
@@ -312,18 +371,12 @@ class GameMenu:
             self.current_held_color = None
             self.start_tile_rc = None
 
-        if self.gameClear:
-                    for button in self.button_win:
-                        if(button.isClicked() == False):
-                            continue  
-                        if(button.getName() == "Try again"):
-                            self.resetGame()
-                        if(button.getName() == "Next level"):
-                            gameMenu = GameMenu(0, self.stage_number+1)
-                            gameMenu.run() 
-                            
-        if self.puzzle_solver.isSolved:
+        if self.gameClear == False:
+            self.cur_num_time = round(time.time() - self.beginTime, 3)
+
+        if self.puzzle_solver.isSolved and self.gameClear == False:
             self.board.tiles=self.puzzle_solver.solution[-1]
+            self.cur_num_time = round(time.time() - self.startAlgorithmTime, 3)
    
     def draw_board(self):
         x_start, y_start = self.board_topLeft[0], self.board_topLeft[1]
@@ -333,8 +386,8 @@ class GameMenu:
         rect_length = tile_length * 0.5
 
         #draw the the Board's top and left sides
-        pygame.draw.line(self.screen, Color.BLACK.value, (x_start, y_start), (x_start + board_length, y_start), width=border_width)
-        pygame.draw.line(self.screen, Color.BLACK.value, (x_start, y_start), (x_start, y_start + board_length), width=border_width)
+        pygame.draw.line(self.screen, Color.SILVER.value, (x_start, y_start), (x_start + board_length, y_start), width=border_width)
+        pygame.draw.line(self.screen, Color.SILVER.value, (x_start, y_start), (x_start, y_start + board_length), width=border_width)
 
         y = y_start
         
@@ -344,8 +397,8 @@ class GameMenu:
             for c in range(self.board.n_tiles_perRow):
                 x += tile_length
                 #draw Tiles right and bottom sides
-                pygame.draw.line(self.screen, Color.BLACK.value, (x, y - tile_length), (x, y), width=border_width)
-                pygame.draw.line(self.screen, Color.BLACK.value, (x - tile_length, y), (x, y), width=border_width)
+                pygame.draw.line(self.screen, Color.SILVER.value, (x, y - tile_length), (x, y), width=border_width)
+                pygame.draw.line(self.screen, Color.SILVER.value, (x - tile_length, y), (x, y), width=border_width)
 
                 #draw Dot
                 if(self.board.getTileDot(r, c) != None):
@@ -378,31 +431,32 @@ class GameMenu:
                             rect_width += 5
                         pygame.draw.rect(self.screen, line_color, [rect_x, rect_y, rect_width, rect_height])
         
-    def draw(self):
+    def draw(self):        
         self.screen.fill(self.background_color)
         self.sprite_list.draw(self.screen)
-
-        for button in self.button_list:
-            button.draw(self.screen)   
         self.draw_board()
-        # if self.gameClear:
-        #     # self.sprite_win = pygame.sprite.Group()
-        #     # self.sprite_win.add(Sprite(180, 120, "resources/images/congratulation.jpg", self.width-180*2, self.height-120*2))
-        #     # self.sprite_win.draw(self.screen)
-            
-        #     # Label(200,200,'Highscore in stage '+str(self.stage_number)+': ', font_size=25).draw(self.screen)
-        #     # Label(200,225,'Number of moves  '+str(self.stage_number),font_size=25).draw(self.screen)
-        #     # Label(200,250,'Number of turns  '+str(self.stage_number),font_size=25).draw(self.screen)
-        #     # Label(200,275,'Number of times  '+str(self.stage_number),font_size=25).draw(self.screen)
-        #     # Label(500,200,'Your score :',font_size=25).draw(self.screen)
-        #     # Label(500,225,str(self.stage_number),font_size=25).draw(self.screen)
-        #     # Label(500,250,str(self.stage_number),font_size=25).draw(self.screen)
-        #     # Label(500,275,str(self.stage_number),font_size=25).draw(self.screen)
-        #     for button in self.button_win:
-        #         button.draw(self.screen) 
+        self.draw_TextButton()
+
+        if self.gameClear:
+            TextButton(200, 100, 500, 400, "", color=(255, 144, 194)).draw(self.screen)
+
+            TextButton(200, 150, 250, 0, "Move", font_size=40, color=(255, 144, 194)).draw(self.screen)
+            TextButton(200, 200, 250, 0, str(self.cur_num_moves), font_size=40, color=(255, 144, 194)).draw(self.screen)
+            TextButton(200, 250, 250, 0, "Turns", font_size=40, color=(255, 144, 194)).draw(self.screen)
+            TextButton(200, 300, 250, 0, str(self.cur_num_turn), font_size=40, color=(255, 144, 194)).draw(self.screen)
+
+            TextButton(450, 150, 250, 0, "Time", font_size=40, color=(255, 144, 194)).draw(self.screen)
+            TextButton(450, 200, 250, 0, str(self.cur_num_time), font_size=40, color=(255, 144, 194)).draw(self.screen)
+
+            if(self.puzzle_solver.isSolved):
+                TextButton(450, 250, 250, 0, "Nodes Visted", font_size=40, color=(255, 144, 194)).draw(self.screen)
+                TextButton(450, 300, 250, 0, "0", font_size=40, color=(255, 144, 194)).draw(self.screen)
+
+            for button in self.button_win:
+                button.draw(self.screen)
+
         pygame.display.flip()
           
-
     def run(self):
         self.playing = True
         self.drawInitalMenu()
@@ -413,11 +467,15 @@ class GameMenu:
             self.update()
             self.draw()
 
+        if self.go_to_next_stage:
+            gameMenu = GameMenu(0, self.stage_number+1)
+            gameMenu.run()
+
 class StageMenu:
     def __init__(self, setting_option):
         self.setting_option = setting_option
         self.width, self.height, self.board_width, self.board_height = self.get_setting_config(setting_option)
-        self.background_color = (102,205,170)
+        self.background_color = (242, 255, 233)
 
         #pygame variables
         pygame.init()
@@ -426,9 +484,11 @@ class StageMenu:
         pygame.display.set_caption("Connect the Dots - Group 1")
         self.clock = pygame.time.Clock()
 
-        self.init_all_sprites()
+        # self.init_all_sprites()
         self.button_list = []
         self.init_all_buttons()
+        self.text_button_list = []
+        self.init_all_text_buttons()
 
     def get_setting_config(self, setting_option):
         width = 900
@@ -444,34 +504,32 @@ class StageMenu:
             pass
 
         return width, height, board_width, board_height
+    
     def init_all_buttons(self):        
-        self.button_list.append(Button(102, 172, "resources/images/Level_01.png", "Level 1", scaler = 0.3))
-        self.button_list.append(Button(247, 172, "resources/images/Level_02.png", "Level 2", scaler = 0.3))
-        self.button_list.append(Button(403, 172, "resources/images/Level_03.png", "Level 3", scaler = 0.3))
-        self.button_list.append(Button(559, 172, "resources/images/Level_04.png", "Level 4", scaler = 0.3))
-        self.button_list.append(Button(715, 172, "resources/images/Level_05.png", "Level 5", scaler = 0.3))
+        pass
+    
+    def init_all_text_buttons(self):
+        self.text_button_list.append(TextButton(50 + 118, 172, 83, 54, "Level 1", font_size = 25,color=(85, 124, 85), hover_color=(250, 112, 112), text_color=(250, 112, 112)))
+        self.text_button_list.append(TextButton(50 + 264, 172, 83, 54, "Level 2", font_size = 25,color=(85, 124, 85), hover_color=(250, 112, 112), text_color=(250, 112, 112)))
+        self.text_button_list.append(TextButton(50 + 410, 172, 83, 54, "Level 3", font_size = 25,color=(85, 124, 85), hover_color=(250, 112, 112), text_color=(250, 112, 112)))
+        self.text_button_list.append(TextButton(50 + 556, 172, 83, 54, "Level 4", font_size = 25,color=(85, 124, 85), hover_color=(250, 112, 112), text_color=(250, 112, 112)))
+        self.text_button_list.append(TextButton(50 + 702, 172, 83, 54, "Level 5", font_size = 25,color=(85, 124, 85), hover_color=(250, 112, 112), text_color=(250, 112, 112)))
+        self.text_button_list.append(TextButton(50 + 118, 338, 83, 54, "Level 6", font_size = 25,color=(85, 124, 85), hover_color=(250, 112, 112), text_color=(250, 112, 112)))
+        self.text_button_list.append(TextButton(50 + 264, 338, 83, 54, "Level 7", font_size = 25,color=(85, 124, 85), hover_color=(250, 112, 112), text_color=(250, 112, 112)))
+        self.text_button_list.append(TextButton(50 + 410, 338, 83, 54, "Level 8", font_size = 25,color=(85, 124, 85), hover_color=(250, 112, 112), text_color=(250, 112, 112)))
+        self.text_button_list.append(TextButton(50 + 556, 338, 83, 54, "Level 9", font_size = 25,color=(85, 124, 85), hover_color=(250, 112, 112), text_color=(250, 112, 112)))
+        self.text_button_list.append(TextButton(50 + 702, 338, 83, 54, "Level 10", font_size = 25,color=(85, 124, 85), hover_color=(250, 112, 112), text_color=(250, 112, 112)))
+        self.text_button_list.append(TextButton(50 + 118, 503, 83, 54, "Level 11", font_size = 25,color=(85, 124, 85), hover_color=(250, 112, 112), text_color=(250, 112, 112)))
+        self.text_button_list.append(TextButton(50 + 264, 503, 83, 54, "Level 12", font_size = 25,color=(85, 124, 85), hover_color=(250, 112, 112), text_color=(250, 112, 112)))
+        self.text_button_list.append(TextButton(50 + 410, 503, 83, 54, "Level 13", font_size = 25,color=(85, 124, 85), hover_color=(250, 112, 112), text_color=(250, 112, 112)))
+        self.text_button_list.append(TextButton(50 + 556, 503, 83, 54, "Level 14", font_size = 25,color=(85, 124, 85), hover_color=(250, 112, 112), text_color=(250, 112, 112)))
+        self.text_button_list.append(TextButton(50 + 702, 503, 83, 54, "Level 15", font_size = 25,color=(85, 124, 85), hover_color=(250, 112, 112), text_color=(250, 112, 112)))
 
-        self.button_list.append(Button(102, 344, "resources/images/Level_01.png", "Level 6", scaler =0.3))
-        self.button_list.append(Button(247, 344, "resources/images/Level_02.png", "Level 7", scaler = 0.3))
-        self.button_list.append(Button(403, 344, "resources/images/Level_03.png", "Level 8", scaler = 0.3))
-        self.button_list.append(Button(559, 344, "resources/images/Level_04.png", "Level 9", scaler = 0.3))
-        self.button_list.append(Button(715, 344, "resources/images/Level_05.png", "Level 10", scaler = 0.3))
+        self.text_button_list.append(TextButton(750, 0, 150, 100, "Go Back", font_size = 35,color=(25, 38, 85), hover_color=(225, 170, 116), text_color=(225, 170, 116)))
 
-        self.button_list.append(Button(102, 516, "resources/images/Level_01.png", "Level 11", scaler = 0.3))
-        self.button_list.append(Button(247, 516, "resources/images/Level_02.png", "Level 10", scaler = 0.3))
-        self.button_list.append(Button(403, 516, "resources/images/Level_03.png", "Level 10", scaler = 0.3))
-        self.button_list.append(Button(559, 516, "resources/images/Level_04.png", "Level 10", scaler = 0.3))
-        self.button_list.append(Button(715, 516, "resources/images/Level_05.png", "Level 10", scaler = 0.3))
-
-    def init_all_sprites(self):
-        self.sprite_list = pygame.sprite.Group()
-        self.sprite_list.add(Sprite(0, 0, "resources/images/background5.jpg", self.width, self.height))
-        self.sprite_list.add(Sprite(32, 85, "resources/images/BASIC0.png", scaler=0.5))
-        self.sprite_list.add(Sprite(39, 258, "resources/images/SPECIAL0.png", scaler=0.5))
-        self.sprite_list.add(Sprite(39, 430, "resources/images/DAILY0.png", scaler=0.5))
-
+      
     def drawInitalMenu(self):
-            self.draw()
+        self.draw()
 
     def get_mouse_pos(self):
         x, y = pygame.mouse.get_pos()
@@ -486,57 +544,79 @@ class StageMenu:
                 quit(0)
 
             if event.type == pygame.MOUSEBUTTONDOWN:
-                for button in self.button_list:
-                    if(button.isClicked() == False):
+                for button in self.text_button_list:
+                    if(button.click(self.get_mouse_pos()) == False):
                         continue
-
-                    if(button.getName() == "Level 1"):
+                    
+                    if(button.getButtonText()) == "Go Back":
+                        self.playing = False
+                    if(button.getButtonText() == "Level 1"):
                         gameMenu = GameMenu(0, 1)
                         gameMenu.run()
-                    if(button.getName() == "Level 2"):
+                    if(button.getButtonText() == "Level 2"):
                         gameMenu = GameMenu(0, 2)
                         gameMenu.run()
-                    if(button.getName() == "Level 3"):
+                    if(button.getButtonText() == "Level 3"):
                         gameMenu = GameMenu(0, 3)
                         gameMenu.run()
-                    if(button.getName() == "Level 4"):
+                    if(button.getButtonText() == "Level 4"):
                         gameMenu = GameMenu(0, 4)
                         gameMenu.run()
-                    if(button.getName() == "Level 5"):
+                    if(button.getButtonText() == "Level 5"):
                         gameMenu = GameMenu(0, 5)
                         gameMenu.run()
-                    if(button.getName() == "Level 6"):
+                    if(button.getButtonText() == "Level 6"):
                         gameMenu = GameMenu(0, 6)
                         gameMenu.run()
-                    if(button.getName() == "Level 7"):
+                    if(button.getButtonText() == "Level 7"):
                         gameMenu = GameMenu(0, 7)
                         gameMenu.run()
-                    if(button.getName() == "Level 8"):
+                    if(button.getButtonText() == "Level 8"):
                         gameMenu = GameMenu(0, 8)
                         gameMenu.run()
-                    if(button.getName() == "Level 9"):
+                    if(button.getButtonText() == "Level 9"):
                         gameMenu = GameMenu(0, 9)
                         gameMenu.run()
-                    if(button.getName() == "Level 10"):
+                    if(button.getButtonText() == "Level 10"):
                         gameMenu = GameMenu(0, 10)
                         gameMenu.run()
-                    if(button.getName() == "Level 11"):
+                    if(button.getButtonText() == "Level 11"):
+                        gameMenu = GameMenu(0, 11)
+                        gameMenu.run()
+                    if(button.getButtonText() == "Level 12"):
+                        gameMenu = GameMenu(0, 11)
+                        gameMenu.run()
+                    if(button.getButtonText() == "Level 13"):
+                        gameMenu = GameMenu(0, 11)
+                        gameMenu.run()
+                    if(button.getButtonText() == "Level 14"):
+                        gameMenu = GameMenu(0, 11)
+                        gameMenu.run()
+                    if(button.getButtonText() == "Level 15"):
                         gameMenu = GameMenu(0, 11)
                         gameMenu.run()
 
     def update(self):
-        pass
+        for text_button in self.text_button_list:
+            text_button.hover(self.get_mouse_pos())
+    
     def draw_labels(self):
-        Label(250, 0, "Stage Menu", font_size= 80, color = (51, 51, 255)).draw(self.screen)
+        Label(190, 0, "Select Stage", font_size= 80, color = (250, 112, 112)).draw(self.screen)
 
+    def draw_Textbutton(self):
+      TextButton(34, 77, 100, 80, "BASIC", font_size = 30,color=(218, 12, 129), hover_color=(255, 255, 255)).draw(self.screen)
+      TextButton(34, 242, 100, 80, "MEDIUM", font_size = 30,color=(148, 11, 146), hover_color=(255, 255, 255)).draw(self.screen)
+      TextButton(34, 407, 100, 80, "HARD", font_size = 30,color=(97, 12, 159), hover_color=(255, 255, 255)).draw(self.screen)
+
+      for text_button in self.text_button_list:
+          text_button.draw(self.screen)
+    
     def draw(self):
         self.screen.fill(self.background_color)
-        #self.draw_labels()
-        self.sprite_list.draw(self.screen)
         for button in self.button_list:
             button.draw(self.screen)
-        #self.sprite_list.draw(self.screen)
         self.draw_labels()
+        self.draw_Textbutton()
 
         pygame.display.flip()
     
@@ -555,7 +635,7 @@ class HomeMenu:
     def __init__(self, setting_option):
         self.setting_option = setting_option
         self.width, self.height, self.board_width, self.board_height = self.get_setting_config(setting_option)
-        self.background_color = (255,255,255)
+        self.background_color = (255,222,173)
 
         #pygame variables
         pygame.init()
@@ -564,9 +644,11 @@ class HomeMenu:
         pygame.display.set_caption("Connect the Dots - Group 1")
         self.clock = pygame.time.Clock()
 
-        self.init_all_sprites()
+        # self.init_all_sprites()
         self.button_list = []
+        self.text_button_list = []
         self.init_all_buttons()
+        self.init_all_text_buttons()
 
     def get_setting_config(self, setting_option):
         width = 900
@@ -582,15 +664,6 @@ class HomeMenu:
             pass
 
         return width, height, board_width, board_height
-    def init_all_buttons(self):        
-          #self.button_list.append(Button(150, 450, "resources/images/BASIC0.png", "Home", scaler = 1))
-          #self.button_list.append(Button(380, 450, "resources/images/SPECIAL0.png", "Home", scaler = 1))
-          #self.button_list.append(Button(600, 450, "resources/images/DAILY0.png", "Home", scaler = 1))
-          self.button_list.append(Button(350, 200, "resources/images/Level_04.png", "Play", scaler = 1))
-
-    def init_all_sprites(self):
-        self.sprite_list = pygame.sprite.Group()
-        self.sprite_list.add(Sprite(0, 0, "resources/images/background5.jpg", self.width, self.height))
 
     def drawInitalMenu(self):
             self.draw()
@@ -609,31 +682,56 @@ class HomeMenu:
 
             if event.type == pygame.MOUSEBUTTONDOWN:
                 if event.type == pygame.MOUSEBUTTONDOWN:
-                    for button in self.button_list:
-                        if(button.isClicked() == False):
+
+                    for text_button in  self.text_button_list:
+                        if text_button.click(self.get_mouse_pos())  == False:
                             continue
 
-                        if(button.getName() == "Play"):
+                        if text_button.getButtonText() == "PLAY GAME":
                             stageMenu = StageMenu(0)
                             stageMenu.run()
-
+                        elif text_button.getButtonText() == "QUIT GAME":
+                            self.playing = False
+                            pygame.quit()
+                            quit(0)
 
     def update(self):
-        pass
+        for text_button in self.text_button_list:
+            text_button.hover(self.get_mouse_pos())
+
+    def init_all_buttons(self):        
+        self.button_list.append(Button(0, 0, "resources/images/Logo.png", "Logo", scaler=0.08))
+
+    def init_all_text_buttons(self):
+        self.text_button_list.append(TextButton(220, 434, 200, 125, "PLAY GAME", font_size = 45,color=(0, 0, 0), hover_color=(255, 255, 255)))
+        self.text_button_list.append(TextButton(506, 434, 200, 125, "QUIT GAME", font_size = 45,color=(0, 0, 0), hover_color=(255, 255, 255)))
+    
     def draw_labels(self):
-        Label(250, 40, "L", font_size= 150, color = (255,0,0)).draw(self.screen)
-        Label(350, 40, "I", font_size= 150, color = (0,255,0)).draw(self.screen)
-        Label(450, 40, "N", font_size= 150, color = (255,255,0)).draw(self.screen)
-        Label(550, 40, "K", font_size= 150, color = (0,0,255)).draw(self.screen)
-        Label(250, 400, "CHOOSE CATEGORY AND LEVEL", font_size= 30, color = (255,0,0)).draw(self.screen)
+        Label(600, 25, "NHÓM 1", font_size= 40, color = (0,0,0)).draw(self.screen)
+        Label(450, 70, "Dương Đức Khải 21110775", font_size= 30, color = (0,0,0)).draw(self.screen)
+        Label(450, 120, "Tô Đức AN 21110810", font_size= 30, color = (0,0,0)).draw(self.screen)
+        Label(450, 170, "Trần Hữu Tuấn 21110810", font_size= 30, color = (0,0,0)).draw(self.screen)
+
+        Label(110, 10, "Trường Đại Học", font_size= 15, color = (0,191,255)).draw(self.screen)
+        Label(110, 30, "Sư Phạm Kỹ Thuật Thành Phố HCM", font_size= 20, color = (0,0,255)).draw(self.screen)
+        Label(110, 60, "HCMC Univercity of Technology and Education", font_size= 10, color = (210,105,30)).draw(self.screen)
+
+        Label(270, 331, "LINK GAME", font_size= 80, color = (0,0,0)).draw(self.screen)
+
+        Label(20, 150, "Final Projects", font_size= 20, color = (65,105,225)).draw(self.screen)
+        Label(30, 180, "Giáo Viên Hướng Dẫn", font_size= 30, color = (30,144,255)).draw(self.screen)
+        Label(50, 230, "Hoàng Văn Dũng", font_size= 40, color = (0,0,255)).draw(self.screen)
+
+    def draw_TextButton(self):
+        for text_button in self.text_button_list:
+            text_button.draw(self.screen)
 
     def draw(self):
         self.screen.fill(self.background_color)
-        self.draw_labels()
-        self.sprite_list.draw(self.screen)
         for button in self.button_list:
             button.draw(self.screen)
         self.draw_labels()
+        self.draw_TextButton()
 
         pygame.display.flip()
     
