@@ -14,6 +14,10 @@ class GameMenu:
         self.board_border = 5
         self.board = self.create_game(self.stage_number)
         self.gameClear = False
+        highest_score = readfile('resources/score/level'+str(self.stage_number)+ '.txt')
+        self.best_num_moves=highest_score[0][1]
+        self.best_num_turn=highest_score[0][2]
+        self.best_num_time=highest_score[0][3]
 
         #variables for processing user mouse inputs on board    
         self.is_connecting_dot = False
