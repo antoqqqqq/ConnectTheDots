@@ -16,8 +16,8 @@ class GameMenu:
         self.gameClear = False
         highest_score = readfile('resources/score/level'+str(self.stage_number)+ '.txt')
         self.best_num_moves=highest_score[0][1]
-        self.best_num_turn=highest_score[0][2]
-        self.best_num_time=highest_score[0][3]
+        self.best_num_turns=highest_score[0][2]
+        self.best_num_times=highest_score[0][3]
 
         #variables for processing user mouse inputs on board    
         self.is_connecting_dot = False
@@ -87,7 +87,7 @@ class GameMenu:
         tiles_with_dot=info_stage[3]
 
         new_board = Board(n_tiles_perRow, tile_length, dot_radius, tiles_with_dot)
-        self.puzzle_solver = Puzzle(new_board.tiles, new_board.DotTiles, new_board.n_tiles_perRow, algorithm='UCS')
+        self.puzzle_solver = Puzzle(new_board.tiles, new_board.DotTiles, new_board.n_tiles_perRow, algorithm='BFS')
 
         return new_board
 
@@ -385,21 +385,21 @@ class GameMenu:
         for button in self.button_list:
             button.draw(self.screen)   
         self.draw_board()
-        if self.gameClear:
-            self.sprite_win = pygame.sprite.Group()
-            self.sprite_win.add(Sprite(180, 120, "resources/images/congratulation.jpg", self.width-180*2, self.height-120*2))
-            self.sprite_win.draw(self.screen)
+        # if self.gameClear:
+        #     # self.sprite_win = pygame.sprite.Group()
+        #     # self.sprite_win.add(Sprite(180, 120, "resources/images/congratulation.jpg", self.width-180*2, self.height-120*2))
+        #     # self.sprite_win.draw(self.screen)
             
-            Label(200,200,'Highscore in stage '+str(self.stage_number)+': ', font_size=25).draw(self.screen)
-            Label(200,225,'Number of moves  '+str(self.stage_number),font_size=25).draw(self.screen)
-            Label(200,250,'Number of turns  '+str(self.stage_number),font_size=25).draw(self.screen)
-            Label(200,275,'Number of times  '+str(self.stage_number),font_size=25).draw(self.screen)
-            Label(500,200,'Your score :',font_size=25).draw(self.screen)
-            Label(500,225,str(self.stage_number),font_size=25).draw(self.screen)
-            Label(500,250,str(self.stage_number),font_size=25).draw(self.screen)
-            Label(500,275,str(self.stage_number),font_size=25).draw(self.screen)
-            for button in self.button_win:
-                button.draw(self.screen) 
+        #     # Label(200,200,'Highscore in stage '+str(self.stage_number)+': ', font_size=25).draw(self.screen)
+        #     # Label(200,225,'Number of moves  '+str(self.stage_number),font_size=25).draw(self.screen)
+        #     # Label(200,250,'Number of turns  '+str(self.stage_number),font_size=25).draw(self.screen)
+        #     # Label(200,275,'Number of times  '+str(self.stage_number),font_size=25).draw(self.screen)
+        #     # Label(500,200,'Your score :',font_size=25).draw(self.screen)
+        #     # Label(500,225,str(self.stage_number),font_size=25).draw(self.screen)
+        #     # Label(500,250,str(self.stage_number),font_size=25).draw(self.screen)
+        #     # Label(500,275,str(self.stage_number),font_size=25).draw(self.screen)
+        #     for button in self.button_win:
+        #         button.draw(self.screen) 
         pygame.display.flip()
           
 

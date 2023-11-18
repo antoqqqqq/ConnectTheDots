@@ -1,8 +1,10 @@
 from business import *
 from collections import deque
+from queue import PriorityQueue
 from enumaration import DirectionUtil
 from enumaration import Direction
-from node import Node
+from node import *
+import random
 import copy
 
 class Puzzle:
@@ -169,6 +171,7 @@ class Puzzle:
                 possibleStates.append((new_state, newDotsConnedtedState,down_node_counter))
 
         #return the possibleStates list
+        random.shuffle(possibleStates)
         return possibleStates
         
     def solve(self):
@@ -226,7 +229,7 @@ class BFS:
             
             #generate leaf childs
             possible_newStates = Puzzle.getPossibleStates(current_node.state, self.dots_list, current_node.dotsConnectedState, self.size)
-            for new_state, new_dotsState in possible_newStates:
+            for new_state, new_dotsState, cost in possible_newStates:
                 new_node = Node(new_state, current_node, new_dotsState)
                 queue.append(new_node)
 
@@ -249,27 +252,17 @@ class UCS:
         #insert the root node in queue
         initial_dots_state = [False for i in range(len(self.dots_list))]
         initial_node = Node(self.start_state, None, initial_dots_state)
-        queue = deque([(0, initial_node)])
-        while queue:
-            cost,node= queue.popleft()
+        initial_ucsnode= USC_node(0,initial_node)
+        Priority_Queue = PriorityQueue()
+        Priority_Queue.put((0, initial_ucsnode))
+        while Priority_Queue:
+            node = Priority_Queue.get()[1]
+            
             if all(node.dotsConnectedState) == True:
                 self.trace_back_solution(node)
                 return True, self.solution
-            possible_newStates = Puzzle.getPossibleStates(node.state, self.dots_list, node.dotsConnectedState, self.size, int(cost))
-            i=0
-            if len(possible_newStates) >1 :
-                if  possible_newStates[i][2]> possible_newStates[i+1][2]:
-                    a=possible_newStates[i]
-                    possible_newStates[i] = possible_newStates[i+1]
-                    possible_newStates[i+1] = a
-            elif len(possible_newStates) ==3 :
-                if possible_newStates[i][2]== possible_newStates[i+1][2]:
-                    a=possible_newStates[i]
-                    possible_newStates[i] = possible_newStates[i+2]
-                    possible_newStates[i+2] = a
-            for new_state, new_dotsState,new_node_counter in possible_newStates:
+            possible_newStates = Puzzle.getPossibleStates(node.state, self.dots_list, node.dotsConnectedState, self.size, int(node.cost))
+            for new_state, new_dotsState,new_cost in possible_newStates:
                 new_node = Node(new_state, node, new_dotsState)
-                cost= new_node_counter
-                New_node=([cost, new_node])
-                queue.append(New_node)
- 
+                New_node = USC_node( new_cost,new_node)
+                Priority_Queue.put((new_cost, New_node))
