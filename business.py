@@ -65,10 +65,79 @@ class Board:
                 # elif self.hasExitDir(pos1[0],pos1[1]) != True:
                     # return False
         return True
-        pass
 
-    def new_method(self):
-        i=1
+    def getMove_turn(self):
+        move=0
+        turn=0
+        pos1=[]
+        pos2=[]
+        for i in range(len(self.DotTiles)):
+            if self.hasExitDir(self.DotTiles[i][0][0],self.DotTiles[i][0][1]):
+                move+=1
+                pos1=[self.DotTiles[i][0][0],self.DotTiles[i][0][1]]
+                pos2=[self.DotTiles[i][0][0]+DirectionUtil.getMoveValue(self.getTileExitDir(self.DotTiles[i][0][0],self.DotTiles[i][0][1]))[0],
+                      self.DotTiles[i][0][1]+DirectionUtil.getMoveValue(self.getTileExitDir(self.DotTiles[i][0][0],self.DotTiles[i][0][1]))[1]]
+                while self.hasExitDir(pos2[0],pos2[1]) and not self.hasDot(pos2[0],pos2[1]):
+                    if self.hasDot(pos1[0],pos1[1]):
+                        if not self.hasExitDir(pos2[0],pos2[1]):
+                            return move, turn
+                        if self.getTileExitDir(pos1[0],pos1[1]) == self.getTileExitDir(pos2[0],pos2[1]):
+                            move+=1
+                        else : turn +=1
+                        pos1=[pos2[0],pos2[1]]
+                        pos2=[pos1[0]+DirectionUtil.getMoveValue(self.getTileExitDir(pos1[0],pos1[1]))[0],
+                            pos1[1]+DirectionUtil.getMoveValue(self.getTileExitDir(pos1[0],pos1[1]))[1]]
+                    elif self.getTileExitDir(pos1[0],pos1[1]) == self.getTileExitDir(pos2[0],pos2[1]):
+                        move+=1
+                        if not self.hasExitDir(pos2[0],pos2[1]):
+                            return move, turn
+                        
+                        pos1=[pos2[0],pos2[1]]
+                        pos2=[pos1[0]+DirectionUtil.getMoveValue(self.getTileExitDir(pos1[0],pos1[1]))[0],
+                            pos1[1]+DirectionUtil.getMoveValue(self.getTileExitDir(pos1[0],pos1[1]))[1]]
+                    elif self.getTileExitDir(pos1[0],pos1[1]) != self.getTileExitDir(pos2[0],pos2[1]):
+                        turn+=1
+                        if not self.hasExitDir(pos2[0],pos2[1]):
+                            return move, turn
+                        pos1=[pos2[0],pos2[1]]
+                        pos2=[pos1[0]+DirectionUtil.getMoveValue(self.getTileExitDir(pos1[0],pos1[1]))[0],
+                            pos1[1]+DirectionUtil.getMoveValue(self.getTileExitDir(pos1[0],pos1[1]))[1]]
+            elif self.hasExitDir(self.DotTiles[i][1][0],self.DotTiles[i][1][1]):
+                move+=1
+                pos1=[self.DotTiles[i][1][0],self.DotTiles[i][1][1]]
+                pos2=[self.DotTiles[i][1][0]+DirectionUtil.getMoveValue(self.getTileExitDir(self.DotTiles[i][1][0],self.DotTiles[i][1][1]))[0],
+                      self.DotTiles[i][1][1]+DirectionUtil.getMoveValue(self.getTileExitDir(self.DotTiles[i][1][0],self.DotTiles[i][1][1]))[1]]
+                while self.hasExitDir(pos2[0],pos2[1]) and not self.hasDot(pos2[0],pos2[1]):
+                    if self.hasDot(pos1[0],pos1[1]):
+                        if not self.hasExitDir(pos2[0],pos2[1]):
+                            return move, turn
+                        if self.getTileExitDir(pos1[0],pos1[1]) == self.getTileExitDir(pos2[0],pos2[1]):
+                            move+=1
+                        else : turn +=1
+                        pos1=[pos2[0],pos2[1]]
+                        pos2=[pos1[0]+DirectionUtil.getMoveValue(self.getTileExitDir(pos1[0],pos1[1]))[0],
+                            pos1[1]+DirectionUtil.getMoveValue(self.getTileExitDir(pos1[0],pos1[1]))[1]]
+                    elif self.getTileExitDir(pos1[0],pos1[1]) == self.getTileExitDir(pos2[0],pos2[1]):
+                        move+=1
+                        if not self.hasExitDir(pos2[0],pos2[1]):
+                            return move, turn
+                        
+                        pos1=[pos2[0],pos2[1]]
+                        pos2=[pos1[0]+DirectionUtil.getMoveValue(self.getTileExitDir(pos1[0],pos1[1]))[0],
+                            pos1[1]+DirectionUtil.getMoveValue(self.getTileExitDir(pos1[0],pos1[1]))[1]]
+                    elif self.getTileExitDir(pos1[0],pos1[1]) != self.getTileExitDir(pos2[0],pos2[1]):
+                        turn+=1
+                        if not self.hasExitDir(pos2[0],pos2[1]):
+                            return move, turn
+                        pos1=[pos2[0],pos2[1]]
+                        pos2=[pos1[0]+DirectionUtil.getMoveValue(self.getTileExitDir(pos1[0],pos1[1]))[0],
+                            pos1[1]+DirectionUtil.getMoveValue(self.getTileExitDir(pos1[0],pos1[1]))[1]]
+        return move, turn
+
+
+
+
+
 
     def getTile(self, row: int, col: int) -> Tile:
         return self.tiles[row * self.n_tiles_perRow + col]
@@ -104,6 +173,9 @@ class Board:
 
     def getTileExitDir(self, row, col) -> Direction:
         return self.tiles[row * self.n_tiles_perRow + col].line_exit_direction
+    
+    def getTileEnterDir(self, row, col) -> Direction:
+        return self.tiles[row * self.n_tiles_perRow + col].line_enter_direction
     
     def containsLine(self, row, col) -> bool:
         return self.tiles[row * self.n_tiles_perRow + col].line_exit_direction != None or self.tiles[row * self.n_tiles_perRow + col].line_enter_direction != None
