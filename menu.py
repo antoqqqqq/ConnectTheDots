@@ -16,9 +16,10 @@ class GameMenu:
         self.board_border = 5
         self.board = self.create_game(self.stage_number)
         self.gameClear = False
-        self.best_num_moves = 0
-        self.best_num_turn  = 0
-        self.best_num_time = 0
+        high_score= read_score('resources/score/level'+str(stage_number)+'.txt')
+        self.best_num_moves = high_score[1]
+        self.best_num_turn  = high_score[2]
+        self.best_num_time = high_score[3]
         #self.get_score()
         self.cur_num_moves = 0
         self.cur_num_turn  = 0
@@ -44,7 +45,7 @@ class GameMenu:
         self.text_button_list = []
         self.button_win= []
         self.init_all_buttons()
-        self.selectedAlgorithm = "BFS"
+        self.selectedAlgorithm = "UCS"
 
     def init_all_buttons(self):        
         self.init_all_text_buttons()
@@ -126,7 +127,7 @@ class GameMenu:
         tiles_with_dot=info_stage[3]
 
         new_board = Board(n_tiles_perRow, tile_length, dot_radius, tiles_with_dot)
-        self.puzzle_solver = Puzzle(new_board.tiles, new_board.DotTiles, new_board.n_tiles_perRow, algorithm='BFS')
+        self.puzzle_solver = Puzzle(new_board.tiles, new_board.DotTiles, new_board.n_tiles_perRow, algorithm='UCS')
         self.beginTime = round(time.time(), 3)
         return new_board
 
@@ -217,6 +218,8 @@ class GameMenu:
                         self.resetGame()
                     if(text_button.getButtonText() == "Home"):
                         self.playing = False
+                    if(text_button.getButtonText() == "Change"):
+                        pass
 
                                   
             if event.type == pygame.MOUSEBUTTONUP:
@@ -350,6 +353,7 @@ class GameMenu:
         
     def update(self):
         mouse_pos = self.get_mouse_pos()
+        self.cur_num_moves , self.cur_num_turn = self.board.getMove_turn()
         for text_button in self.text_button_list:
             text_button.hover(mouse_pos)
 

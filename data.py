@@ -56,7 +56,19 @@ def read_stage( file_path):
         return int(stage),int(n_tiles_perRow),int(number_node),tiles_with_dot
     except IOError:
         print("Error: could not read file " + file_path)
-a=read_stage("resources/level/level1.txt")
-b=0
-for i in range(len(a)):
-    b+=1
+def read_score(filename):
+    try:
+        with open(filename, 'r') as f:
+            data_entries = []
+            for line in f:
+                #row(stage, number of moves, number of turns, time)
+                row = []
+                elements=line.strip('\n').split('-')
+                row.append(elements[0])
+                row.append(elements[1])
+                row.append(elements[2])
+                row.append(elements[3])
+            f.close()
+        return row
+    except IOError:
+        print("Error: could not read file " + filename)
