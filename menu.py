@@ -46,7 +46,7 @@ class GameMenu:
         self.text_button_list = []
         self.button_win= []
         self.init_all_buttons()
-        self.selectedAlgorithm = "UCS"
+        self.selectedAlgorithm = "BFS"
 
     def init_all_buttons(self):        
         self.init_all_text_buttons()
@@ -461,7 +461,7 @@ class GameMenu:
 
             if(self.puzzle_solver.isSolved):
                 TextButton(450, 250, 250, 0, "Nodes Visted", font_size=40, color=(255, 144, 194)).draw(self.screen)
-                TextButton(450, 300, 250, 0, "0", font_size=40, color=(255, 144, 194)).draw(self.screen)
+                TextButton(450, 300, 250, 0, str(self.puzzle_solver.nodesVisted), font_size=40, color=(255, 144, 194)).draw(self.screen)
 
             for button in self.button_win:
                 button.draw(self.screen)
