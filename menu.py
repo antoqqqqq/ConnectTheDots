@@ -16,6 +16,7 @@ class GameMenu:
         self.board_border = 5
         self.board = self.create_game(self.stage_number)
         self.gameClear = False
+        self.showCongratulation = True
         high_score= read_score('resources/score/level'+str(stage_number)+'.txt')
         self.best_num_moves = high_score[1]
         self.best_num_turn  = high_score[2]
@@ -109,6 +110,7 @@ class GameMenu:
         self.button_win=[]
         self.board = self.create_game(self.stage_number)
         self.gameClear = False
+        self.showCongratulation = True
         self.is_connecting_dot = False
         self.previous_passed_tile_rc = None
         self.current_held_tile_rc = None
@@ -195,7 +197,7 @@ class GameMenu:
                             self.current_held_color = self.board.getTileDot(r, c).color  
                             self.start_tile_rc = [r, c]
 
-                if self.gameClear:
+                if self.gameClear and self.showCongratulation:
                     for button in self.button_win:
                         if(button.click(self.get_mouse_pos()) == False):
                             continue  
@@ -204,12 +206,14 @@ class GameMenu:
                         if(button.getButtonText() == "Next Level"):
                             self.playing = False
                             self.go_to_next_stage = True
+                        if(button.getButtonText() == "See Result"):
+                            self.showCongratulation = False
 
                 for text_button in self.text_button_list:
                     if text_button.click((mouse_x, mouse_y)) == False:
                         continue
 
-                    if text_button.getButtonText() == "Solve":
+                    if text_button.getButtonText() == "Solve" and self.gameClear == False:
                         self.puzzle_solver.selectedAlgorithm = self.selectedAlgorithm
                         self.startAlgorithmTime = time.time()
                         self.puzzle_solver.solve()
@@ -219,8 +223,10 @@ class GameMenu:
                     if(text_button.getButtonText() == "Home"):
                         self.playing = False
                     if(text_button.getButtonText() == "Change"):
-                        pass
-
+                        if self.selectedAlgorithm == "BFS":
+                            self.selectedAlgorithm = "UCS"
+                        elif self.selectedAlgorithm == "UCS":
+                            self.selectedAlgorithm = "BFS"
                                   
             if event.type == pygame.MOUSEBUTTONUP:
                 self.is_connecting_dot = False
@@ -359,8 +365,9 @@ class GameMenu:
 
         if self.board.IsGameClear() and self.gameClear == False:
             self.gameClear=True
-            self.button_win.append(TextButton(250, 375, 150, 100, "Next Level"))
-            self.button_win.append(TextButton(500, 375, 150, 100, "Try Again"))
+            self.button_win.append(TextButton(225, 375, 100, 75, "Next Level", font_size=25))
+            self.button_win.append(TextButton(400, 375, 100, 75, "Try Again", font_size=25))
+            self.button_win.append(TextButton(575, 375, 100, 75, "See Result", font_size=25))
         elif self.gameClear:
             for button in self.button_win:
                 button.hover(self.get_mouse_pos())
@@ -441,7 +448,7 @@ class GameMenu:
         self.draw_board()
         self.draw_TextButton()
 
-        if self.gameClear:
+        if self.gameClear and self.showCongratulation:
             TextButton(200, 100, 500, 400, "", color=(255, 144, 194)).draw(self.screen)
 
             TextButton(200, 150, 250, 0, "Move", font_size=40, color=(255, 144, 194)).draw(self.screen)
