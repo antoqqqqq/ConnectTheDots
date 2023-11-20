@@ -197,7 +197,6 @@ class Puzzle:
     def A_solve(self):
         pass
 
-
 class BFS:
     def __init__(self, start_state, dots_list, size):
         self.start_state = start_state
@@ -236,8 +235,6 @@ class BFS:
                 new_node = Node(new_state, current_node, new_dotsState)
                 queue.append(new_node)
 
-
-
 class UCS:
     def __init__(self, start_state, dots_list, size):
         self.start_state = start_state
@@ -258,6 +255,44 @@ class UCS:
         initial_ucsnode= USC_node(0,initial_node)
         Priority_Queue = PriorityQueue()
         Priority_Queue.put((0, initial_ucsnode))
+        while Priority_Queue:
+            node = Priority_Queue.get()[1]
+            self.node_counter += 1
+            
+            if all(node.dotsConnectedState) == True:
+                self.trace_back_solution(node)
+                return True, self.solution
+            possible_newStates = Puzzle.getPossibleStates(node.state, self.dots_list, node.dotsConnectedState, self.size, int(node.cost))
+            for new_state, new_dotsState,new_cost in possible_newStates:
+                new_node = Node(new_state, node, new_dotsState)
+                New_node = USC_node( new_cost,new_node)
+                Priority_Queue.put((new_cost, New_node))
+
+class A_star:
+    def __init__(self, start_state, dots_list, size):
+        self.start_state = start_state
+        self.dots_list = dots_list
+        self.size = size
+        self.solution = list()
+        self.node_counter = 0 
+
+    def trace_back_solution(self, node: Node):
+        if node is None:
+            return
+        self.trace_back_solution(node.parent)
+        if node.state is not None:
+            self.solution.append(node.state)
+
+    def get_heuristic(self, node: Astar_node):
+
+
+    def solve(self):
+        #insert the root node in queue
+        initial_dots_state = [False for i in range(len(self.dots_list))]
+        initial_node = Node(self.start_state, None, initial_dots_state)
+        initial_Anode= Astar_node(0, 0, initial_node)
+        Priority_Queue = PriorityQueue()
+        Priority_Queue.put((0, initial_Anode))
         while Priority_Queue:
             node = Priority_Queue.get()[1]
             self.node_counter += 1
