@@ -30,7 +30,9 @@ class GameMenu:
 
         #variables for processing user mouse inputs on board 
         self.Algorithm_solved = False
+        self.startSolver = False
         self.is_connecting_dot = False
+        self.updateTimer = True
         self.previous_passed_tile_rc = None
         self.current_held_tile_rc = None
         self.current_held_color = None
@@ -46,6 +48,7 @@ class GameMenu:
         self.button_list = []
         self.text_button_list = []
         self.button_win= []
+        self.button_unsolvable = []
         self.init_all_buttons()
         self.selectedAlgorithm = "A Star"
 
@@ -112,10 +115,13 @@ class GameMenu:
         self.best_num_turn  = high_score[2]
         self.best_num_time = high_score[3]
         self.button_win=[]
+        self.button_unsolvable = []
         self.board = self.create_game(self.stage_number)
         self.gameClear = False
         self.showCongratulation = True
         self.Algorithm_solved = False
+        self.startSolver = False
+        self.updateTimer = True
         self.is_connecting_dot = False
         self.previous_passed_tile_rc = None
         self.current_held_tile_rc = None
@@ -204,7 +210,6 @@ class GameMenu:
 
                 if self.gameClear and self.showCongratulation:
                     
-
                     for button in self.button_win:
                         if(button.click(self.get_mouse_pos()) == False):
                             continue  
@@ -215,6 +220,14 @@ class GameMenu:
                             self.go_to_next_stage = True
                         if(button.getButtonText() == "See Result"):
                             self.showCongratulation = False
+                elif self.startSolver == True and self.puzzle_solver.isSolved == False:
+                    for button in self.button_unsolvable:
+                        if(button.click(self.get_mouse_pos()) == False):
+                            continue
+                        if(button.getButtonText() == "Resume"):
+                            self.startSolver = False
+                            self.beginTime = round(time.time(), 3)
+                            self.updateTimer = True
 
                 for text_button in self.text_button_list:
                     if text_button.click((mouse_x, mouse_y)) == False:
@@ -222,9 +235,11 @@ class GameMenu:
 
                     if text_button.getButtonText() == "Solve" and self.gameClear == False:
                         self.Algorithm_solved = True
+                        self.updateTimer = False
                         self.puzzle_solver.selectedAlgorithm = self.selectedAlgorithm
                         self.startAlgorithmTime = time.time()
                         self.puzzle_solver.solve()
+                        self.startSolver = True
 
                     if(text_button.getButtonText() == "Reset"):
                         self.resetGame()
@@ -382,6 +397,10 @@ class GameMenu:
         elif self.gameClear:
             for button in self.button_win:
                 button.hover(self.get_mouse_pos())
+        elif self.startSolver == True and self.puzzle_solver.isSolved == False:
+            self.button_unsolvable.append(TextButton(400, 375, 100, 75, "Resume", font_size=25))
+            for button in self.button_unsolvable:
+                button.hover(self.get_mouse_pos())
 
         if self.is_connecting_dot:
             mouse_x, mouse_y = self.get_mouse_pos()
@@ -393,7 +412,7 @@ class GameMenu:
             self.current_held_color = None
             self.start_tile_rc = None
 
-        if self.gameClear == False:
+        if self.gameClear == False and self.updateTimer == True:
             self.cur_num_time = round(time.time() - self.beginTime, 3)
 
         if self.puzzle_solver.isSolved and self.gameClear == False:
@@ -408,7 +427,7 @@ class GameMenu:
                 elif self.cur_num_moves == int(self.best_num_moves):
                     if self.cur_num_time < float(self.best_num_time):
                         write_file('resources/score/level'+str(self.stage_number)+'.txt', str(self.stage_number)+'-'+str(self.cur_num_moves)+'-'+str(self.cur_num_turn)+'-'+str(self.cur_num_time))
-   
+        
     def draw_board(self):
         x_start, y_start = self.board_topLeft[0], self.board_topLeft[1]
         board_length = self.board_length
@@ -484,6 +503,13 @@ class GameMenu:
                 TextButton(450, 300, 250, 0, str(self.puzzle_solver.nodesVisted), font_size=40, color=(255, 144, 194)).draw(self.screen)
 
             for button in self.button_win:
+                button.draw(self.screen)
+        elif self.startSolver == True and self.puzzle_solver.isSolved == False:
+            TextButton(200, 100, 500, 400, "", color=(255, 144, 194)).draw(self.screen)
+            TextButton(200, 150, 500, 0, "No solution for the current state!", font_size=40, color=(255, 144, 194)).draw(self.screen)
+            TextButton(200, 250, 500, 0, "Nodes Visted", font_size=40, color=(255, 144, 194)).draw(self.screen)
+            TextButton(200, 300, 500, 0, str(self.puzzle_solver.nodesVisted), font_size=40, color=(255, 144, 194)).draw(self.screen)
+            for button in self.button_unsolvable:
                 button.draw(self.screen)
 
         pygame.display.flip()

@@ -45,7 +45,7 @@ class Puzzle:
         cur_pos = [pos for pos in dotsPair[0]]
         if (state[cur_pos[0] * size + cur_pos[1]].line_exit_direction == None):
             cur_pos = [pos for pos in dotsPair[1]]
-            
+
         while state[cur_pos[0] * size + cur_pos[1]].line_exit_direction != None:
             row_offset, col_offset =  DirectionUtil.getMoveValue(state[cur_pos[0] * size + cur_pos[1]].line_exit_direction)
             cur_pos[0] += row_offset
@@ -250,12 +250,14 @@ class UCS:
         self.size = size
         self.solution = list()
         self.node_counter = 0 
+
     def trace_back_solution(self, node: Node):
         if node is None:
             return
         self.trace_back_solution(node.parent)
         if node.state is not None:
             self.solution.append(node.state)
+
     def solve(self):
         #insert the root node in queue
         initial_dots_state = [False for i in range(len(self.dots_list))]
@@ -263,7 +265,7 @@ class UCS:
         initial_ucsnode= USC_node(0,initial_node)
         queue = PriorityQueue()
         queue.put((0, initial_ucsnode))
-        while queue:
+        while queue.empty() == False:
             node = queue.get()[1]
             self.node_counter += 1
             
@@ -315,7 +317,7 @@ class A_star:
         initial_Anode.h_score = self.get_heuristic(initial_Anode)
         queue = PriorityQueue()
         queue.put((0, initial_Anode))
-        while queue:
+        while queue.empty() == False:
             node = queue.get()[1]
             self.node_counter += 1
             
