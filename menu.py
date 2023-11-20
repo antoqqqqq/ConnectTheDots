@@ -17,7 +17,7 @@ class GameMenu:
         self.board = self.create_game(self.stage_number)
         self.gameClear = False
         self.showCongratulation = True
-        high_score= read_score('resources/score/level'+str(stage_number)+'.txt')
+        high_score = read_score('resources/score/level'+str(stage_number)+'.txt')
         self.best_num_moves = high_score[1]
         self.best_num_turn  = high_score[2]
         self.best_num_time = high_score[3]
@@ -720,7 +720,7 @@ class HomeMenu:
     def draw_labels(self):
         Label(600, 25, "NHÓM 1", font_size= 40, color = (0,0,0)).draw(self.screen)
         Label(450, 70, "Dương Đức Khải 21110775", font_size= 30, color = (0,0,0)).draw(self.screen)
-        Label(450, 120, "Tô Đức AN 21110810", font_size= 30, color = (0,0,0)).draw(self.screen)
+        Label(450, 120, "Tô Đức AN 21110002", font_size= 30, color = (0,0,0)).draw(self.screen)
         Label(450, 170, "Trần Hữu Tuấn 21110810", font_size= 30, color = (0,0,0)).draw(self.screen)
 
         Label(110, 10, "Trường Đại Học", font_size= 15, color = (0,191,255)).draw(self.screen)
@@ -730,7 +730,7 @@ class HomeMenu:
         Label(270, 331, "LINK GAME", font_size= 80, color = (0,0,0)).draw(self.screen)
 
         Label(20, 150, "Final Projects", font_size= 20, color = (65,105,225)).draw(self.screen)
-        Label(30, 180, "Giáo Viên Hướng Dẫn", font_size= 30, color = (30,144,255)).draw(self.screen)
+        Label(30, 180, "Giảng Viên Hướng Dẫn", font_size= 30, color = (30,144,255)).draw(self.screen)
         Label(50, 230, "Hoàng Văn Dũng", font_size= 40, color = (0,0,255)).draw(self.screen)
 
     def draw_TextButton(self):
