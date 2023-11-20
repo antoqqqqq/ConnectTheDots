@@ -43,7 +43,9 @@ class Puzzle:
         possibleStates = list()
         #traverse to the end of the line
         cur_pos = [pos for pos in dotsPair[0]]
-        
+        if (state[cur_pos[0] * size + cur_pos[1]].line_exit_direction == None):
+            cur_pos = [pos for pos in dotsPair[1]]
+            
         while state[cur_pos[0] * size + cur_pos[1]].line_exit_direction != None:
             row_offset, col_offset =  DirectionUtil.getMoveValue(state[cur_pos[0] * size + cur_pos[1]].line_exit_direction)
             cur_pos[0] += row_offset
@@ -238,6 +240,8 @@ class BFS:
             for new_state, new_dotsState, cost in possible_newStates:
                 new_node = Node(new_state, current_node, new_dotsState)
                 queue.append(new_node)
+        
+        return False, self.solution
 
 class UCS:
     def __init__(self, start_state, dots_list, size):
@@ -271,6 +275,8 @@ class UCS:
                 new_node = Node(new_state, node, new_dotsState)
                 New_node = USC_node( new_cost,new_node)
                 queue.put((new_cost, New_node))
+        
+        return False, self.solution
 
 class A_star:
     def __init__(self, start_state, dots_list, size):
@@ -321,3 +327,5 @@ class A_star:
                 new_node = Node(new_state, node, new_dotsState)
                 New_node = Astar_node(new_cost, self.get_heuristic(new_node), new_node)
                 queue.put((New_node.cost + New_node.h_score, New_node))
+
+        return False, self.solution
