@@ -28,7 +28,8 @@ class GameMenu:
 
         self.go_to_next_stage = False
 
-        #variables for processing user mouse inputs on board    
+        #variables for processing user mouse inputs on board 
+        self.Algorithm_solved = False
         self.is_connecting_dot = False
         self.previous_passed_tile_rc = None
         self.current_held_tile_rc = None
@@ -106,11 +107,15 @@ class GameMenu:
         self.cur_num_moves = 0
         self.cur_num_turn  = 0
         self.cur_num_time = 0
-
+        high_score= read_score('resources/score/level'+str(self.stage_number)+'.txt')
+        self.best_num_moves = high_score[1]
+        self.best_num_turn  = high_score[2]
+        self.best_num_time = high_score[3]
         self.button_win=[]
         self.board = self.create_game(self.stage_number)
         self.gameClear = False
         self.showCongratulation = True
+        self.Algorithm_solved = False
         self.is_connecting_dot = False
         self.previous_passed_tile_rc = None
         self.current_held_tile_rc = None
@@ -198,6 +203,8 @@ class GameMenu:
                             self.start_tile_rc = [r, c]
 
                 if self.gameClear and self.showCongratulation:
+                    
+
                     for button in self.button_win:
                         if(button.click(self.get_mouse_pos()) == False):
                             continue  
@@ -214,6 +221,7 @@ class GameMenu:
                         continue
 
                     if text_button.getButtonText() == "Solve" and self.gameClear == False:
+                        self.Algorithm_solved = True
                         self.puzzle_solver.selectedAlgorithm = self.selectedAlgorithm
                         self.startAlgorithmTime = time.time()
                         self.puzzle_solver.solve()
@@ -388,6 +396,15 @@ class GameMenu:
         if self.puzzle_solver.isSolved and self.gameClear == False:
             self.board.tiles=self.puzzle_solver.solution[-1]
             self.cur_num_time = round(time.time() - self.startAlgorithmTime, 3)
+        if self.puzzle_solver.isSolved==False and self.gameClear == True:
+            if self.cur_num_turn< int(self.best_num_turn) or int(self.best_num_moves)==0:
+                write_file('resources/score/level'+str(self.stage_number)+'.txt', str(self.stage_number)+'-'+str(self.cur_num_moves)+'-'+str(self.cur_num_turn)+'-'+str(self.cur_num_time))
+            elif self.cur_num_turn== int(self.best_num_turn):
+                if self.cur_num_moves < int(self.best_num_moves):
+                    write_file('resources/score/level'+str(self.stage_number)+'.txt', str(self.stage_number)+'-'+str(self.cur_num_moves)+'-'+str(self.cur_num_turn)+'-'+str(self.cur_num_time))
+                elif self.cur_num_moves == int(self.best_num_moves):
+                    if self.cur_num_time < float(self.best_num_time):
+                        write_file('resources/score/level'+str(self.stage_number)+'.txt', str(self.stage_number)+'-'+str(self.cur_num_moves)+'-'+str(self.cur_num_turn)+'-'+str(self.cur_num_time))
    
     def draw_board(self):
         x_start, y_start = self.board_topLeft[0], self.board_topLeft[1]
@@ -720,7 +737,7 @@ class HomeMenu:
     def draw_labels(self):
         Label(600, 25, "NHÓM 1", font_size= 40, color = (0,0,0)).draw(self.screen)
         Label(450, 70, "Dương Đức Khải 21110775", font_size= 30, color = (0,0,0)).draw(self.screen)
-        Label(450, 120, "Tô Đức AN 21110810", font_size= 30, color = (0,0,0)).draw(self.screen)
+        Label(450, 120, "Tô Đức AN 21110002", font_size= 30, color = (0,0,0)).draw(self.screen)
         Label(450, 170, "Trần Hữu Tuấn 21110810", font_size= 30, color = (0,0,0)).draw(self.screen)
 
         Label(110, 10, "Trường Đại Học", font_size= 15, color = (0,191,255)).draw(self.screen)
