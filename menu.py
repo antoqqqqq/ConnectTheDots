@@ -746,7 +746,7 @@ class HomeMenu:
 
         Label(270, 331, "LINK GAME", font_size= 80, color = (0,0,0)).draw(self.screen)
 
-        Label(20, 150, "Final Projects", font_size= 20, color = (65,105,225)).draw(self.screen)
+        Label(20, 150, "Final Project", font_size= 20, color = (65,105,225)).draw(self.screen)
         Label(30, 180, "Giảng Viên Hướng Dẫn", font_size= 30, color = (30,144,255)).draw(self.screen)
         Label(50, 230, "Hoàng Văn Dũng", font_size= 40, color = (0,0,255)).draw(self.screen)
 
