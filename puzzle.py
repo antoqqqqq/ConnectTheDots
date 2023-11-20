@@ -283,14 +283,26 @@ class A_star:
         if node.state is not None:
             self.solution.append(node.state)
 
-    def get_heuristic(self, node: Astar_node):
+    def get_heuristic(self, node: Node):
+        h = 0
+        for dots in self.dots_list:
+            #get the pos of the first Dot and the second Dot
+            cur_pos = [pos for pos in dots[0]]
+            goal_pos = [pos for pos in dots[1]]
+            while node.state[cur_pos[0] * self.size + cur_pos[1]].line_exit_direction != None:
+                row_offset, col_offset =  DirectionUtil.getMoveValue(node.state[cur_pos[0] * self.size + cur_pos[1]].line_exit_direction)
+                cur_pos[0] += row_offset
+                cur_pos[1] += col_offset
 
+            h += abs(goal_pos[0] - cur_pos[0]) + abs(goal_pos[1] - cur_pos[1])
+        return h
 
     def solve(self):
         #insert the root node in queue
         initial_dots_state = [False for i in range(len(self.dots_list))]
         initial_node = Node(self.start_state, None, initial_dots_state)
         initial_Anode= Astar_node(0, 0, initial_node)
+        initial_Anode.h_score = self.get_heuristic(initial_Anode)
         Priority_Queue = PriorityQueue()
         Priority_Queue.put((0, initial_Anode))
         while Priority_Queue:
@@ -303,5 +315,5 @@ class A_star:
             possible_newStates = Puzzle.getPossibleStates(node.state, self.dots_list, node.dotsConnectedState, self.size, int(node.cost))
             for new_state, new_dotsState,new_cost in possible_newStates:
                 new_node = Node(new_state, node, new_dotsState)
-                New_node = USC_node( new_cost,new_node)
+                New_node = Astar_node(new_cost,new_node)
                 Priority_Queue.put((new_cost, New_node))
