@@ -20,11 +20,12 @@ class Puzzle:
         self.max_moves_per_line = max_moves_per_line
         self.solution = list
         self.isSolved = False
+        self.nodesVisted = 0
     
     @staticmethod
     #try all possible moves for a dots pair that aren't connected
     #when a dots pair is connected, set the index of the dots pair in dotsConnectedState to true
-    def getPossibleStates(state, dots_list, dotsConnectedState, size,node_counter = 0):
+    def getPossibleStates(state, dots_list, dotsConnectedState, size, cost = 0):
         #get the first index that it equals to False in dotsConnectedState
         #the index is -1 (doesn't chang) if all elements in the list are True
         dotPairIndex = -1
@@ -55,7 +56,7 @@ class Puzzle:
         row_offset, col_offset = DirectionUtil.getMoveValueFromName(move)
         next_pos[0] += row_offset
         next_pos[1] += col_offset
-        left_node_counter=node_counter  
+        left_cost=cost 
         if(next_pos[0] >= 0 and next_pos[0] < size and next_pos[1] >= 0 and next_pos[1] < size
            and state[next_pos[0] * size + next_pos[1]].line_color == None):
             if state[next_pos[0] * size + next_pos[1]].dot == None or state[next_pos[0] * size + next_pos[1]].dot.color == dotColor:
@@ -70,14 +71,14 @@ class Puzzle:
                 new_state[next_pos[0] * size + next_pos[1]].line_color = dotColor
                 if new_state[cur_pos[0] * size + cur_pos[1]].line_enter_direction !=None:
                     if new_state[cur_pos[0] * size + cur_pos[1]].line_enter_direction==new_state[next_pos[0] * size + next_pos[1]].line_enter_direction:
-                        left_node_counter+=1
+                        left_cost+=1
                     else:
-                        left_node_counter+=2
-                else:left_node_counter+=1
+                        left_cost+=2
+                else:left_cost+=1
                 if state[next_pos[0] * size + next_pos[1]].dot != None and state[next_pos[0] * size + next_pos[1]].dot.color == dotColor:
                     newDotsConnedtedState[dotPairIndex] = True
 
-                possibleStates.append((new_state, newDotsConnedtedState,left_node_counter))
+                possibleStates.append((new_state, newDotsConnedtedState,left_cost))
 
         move = "Right"
         # next_pos = DirectionUtil.getMoveValueFromName(move)
@@ -85,7 +86,7 @@ class Puzzle:
         row_offset, col_offset = DirectionUtil.getMoveValueFromName(move)
         next_pos[0] += row_offset
         next_pos[1] += col_offset
-        right_node_counter=node_counter
+        right_cost=cost
         if (next_pos[0] >= 0 and next_pos[0] < size and next_pos[1] >= 0 and next_pos[1] < size
            and state[next_pos[0] * size + next_pos[1]].line_color == None):
             if state[next_pos[0] * size + next_pos[1]].dot == None or state[next_pos[0] * size + next_pos[1]].dot.color == dotColor:
@@ -100,15 +101,15 @@ class Puzzle:
                 new_state[next_pos[0] * size + next_pos[1]].line_color = dotColor
                 if new_state[cur_pos[0] * size + cur_pos[1]].line_enter_direction !=None:
                     if new_state[cur_pos[0] * size + cur_pos[1]].line_enter_direction==new_state[next_pos[0] * size + next_pos[1]].line_enter_direction:
-                        right_node_counter +=1
+                        right_cost +=1
                     else:
-                        right_node_counter +=2
-                else:right_node_counter +=1
+                        right_cost +=2
+                else:right_cost +=1
 
                 if state[next_pos[0] * size + next_pos[1]].dot != None and state[next_pos[0] * size + next_pos[1]].dot.color == dotColor:
                     newDotsConnedtedState[dotPairIndex] = True
                 
-                possibleStates.append((new_state, newDotsConnedtedState,right_node_counter))
+                possibleStates.append((new_state, newDotsConnedtedState,right_cost))
 
         move = "Up"
         # next_pos = DirectionUtil.getMoveValueFromName(move)
@@ -116,7 +117,7 @@ class Puzzle:
         row_offset, col_offset = DirectionUtil.getMoveValueFromName(move)
         next_pos[0] += row_offset
         next_pos[1] += col_offset
-        up_node_counter=node_counter
+        up_cost=cost
         if(next_pos[0] >= 0 and next_pos[0] < size and next_pos[1] >= 0 and next_pos[1] < size
            and state[next_pos[0] * size + next_pos[1]].line_color == None):
             if state[next_pos[0] * size + next_pos[1]].dot == None or state[next_pos[0] * size + next_pos[1]].dot.color == dotColor:
@@ -131,14 +132,14 @@ class Puzzle:
                 new_state[next_pos[0] * size + next_pos[1]].line_color = dotColor
                 if new_state[cur_pos[0] * size + cur_pos[1]].line_enter_direction !=None:
                     if new_state[cur_pos[0] * size + cur_pos[1]].line_enter_direction==new_state[next_pos[0] * size + next_pos[1]].line_enter_direction:
-                        up_node_counter +=1
+                        up_cost +=1
                     else:
-                        up_node_counter +=2
-                else:up_node_counter +=1
+                        up_cost +=2
+                else:up_cost +=1
                 if state[next_pos[0] * size + next_pos[1]].dot != None and state[next_pos[0] * size + next_pos[1]].dot.color == dotColor:
                     newDotsConnedtedState[dotPairIndex] = True
 
-                possibleStates.append((new_state, newDotsConnedtedState,up_node_counter))
+                possibleStates.append((new_state, newDotsConnedtedState,up_cost))
 
         move = "Down"
         # next_pos = DirectionUtil.getMoveValueFromName(move)
@@ -146,7 +147,7 @@ class Puzzle:
         row_offset, col_offset = DirectionUtil.getMoveValueFromName(move)
         next_pos[0] += row_offset
         next_pos[1] += col_offset
-        down_node_counter=node_counter
+        down_cost=cost
         if(next_pos[0] >= 0 and next_pos[0] < size and next_pos[1] >= 0 and next_pos[1] < size
            and state[next_pos[0] * size + next_pos[1]].line_color == None):
             if state[next_pos[0] * size + next_pos[1]].dot == None or state[next_pos[0] * size + next_pos[1]].dot.color == dotColor:
@@ -161,14 +162,14 @@ class Puzzle:
                 new_state[next_pos[0] * size + next_pos[1]].line_color = dotColor
                 if new_state[cur_pos[0] * size + cur_pos[1]].line_enter_direction !=None:
                     if new_state[cur_pos[0] * size + cur_pos[1]].line_enter_direction==new_state[next_pos[0] * size + next_pos[1]].line_enter_direction:
-                        down_node_counter +=1
+                        down_cost +=1
                     else:
-                        down_node_counter +=2
-                else:down_node_counter +=1
+                        down_cost +=2
+                else:down_cost +=1
                 if state[next_pos[0] * size + next_pos[1]].dot != None and state[next_pos[0] * size + next_pos[1]].dot.color == dotColor:
                         newDotsConnedtedState[dotPairIndex] = True
 
-                possibleStates.append((new_state, newDotsConnedtedState,down_node_counter))
+                possibleStates.append((new_state, newDotsConnedtedState,down_cost))
 
         #return the possibleStates list
         random.shuffle(possibleStates)
@@ -183,10 +184,12 @@ class Puzzle:
     def BFS_solve(self):
         solver = BFS(self.start_state, self.dots_list, self.size)
         self.isSolved, self.solution = solver.solve()
+        self.nodesVisted = solver.node_counter
 
     def UCS_solve(self):
         solver = UCS(self.start_state, self.dots_list, self.size)
         self.isSolved, self.solution = solver.solve()
+        self.nodesVisted = solver.node_counter
 
     def HillClimbing_solve(self):
         pass
@@ -257,6 +260,7 @@ class UCS:
         Priority_Queue.put((0, initial_ucsnode))
         while Priority_Queue:
             node = Priority_Queue.get()[1]
+            self.node_counter += 1
             
             if all(node.dotsConnectedState) == True:
                 self.trace_back_solution(node)

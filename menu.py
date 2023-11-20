@@ -17,7 +17,7 @@ class GameMenu:
         self.board = self.create_game(self.stage_number)
         self.gameClear = False
         self.showCongratulation = True
-        high_score= read_score('resources/score/level'+str(stage_number)+'.txt')
+        high_score = read_score('resources/score/level'+str(stage_number)+'.txt')
         self.best_num_moves = high_score[1]
         self.best_num_turn  = high_score[2]
         self.best_num_time = high_score[3]
@@ -47,7 +47,7 @@ class GameMenu:
         self.text_button_list = []
         self.button_win= []
         self.init_all_buttons()
-        self.selectedAlgorithm = "UCS"
+        self.selectedAlgorithm = "BFS"
 
     def init_all_buttons(self):        
         self.init_all_text_buttons()
@@ -478,7 +478,7 @@ class GameMenu:
 
             if(self.puzzle_solver.isSolved):
                 TextButton(450, 250, 250, 0, "Nodes Visted", font_size=40, color=(255, 144, 194)).draw(self.screen)
-                TextButton(450, 300, 250, 0, "0", font_size=40, color=(255, 144, 194)).draw(self.screen)
+                TextButton(450, 300, 250, 0, str(self.puzzle_solver.nodesVisted), font_size=40, color=(255, 144, 194)).draw(self.screen)
 
             for button in self.button_win:
                 button.draw(self.screen)
@@ -747,7 +747,7 @@ class HomeMenu:
         Label(270, 331, "LINK GAME", font_size= 80, color = (0,0,0)).draw(self.screen)
 
         Label(20, 150, "Final Projects", font_size= 20, color = (65,105,225)).draw(self.screen)
-        Label(30, 180, "Giáo Viên Hướng Dẫn", font_size= 30, color = (30,144,255)).draw(self.screen)
+        Label(30, 180, "Giảng Viên Hướng Dẫn", font_size= 30, color = (30,144,255)).draw(self.screen)
         Label(50, 230, "Hoàng Văn Dũng", font_size= 40, color = (0,0,255)).draw(self.screen)
 
     def draw_TextButton(self):
