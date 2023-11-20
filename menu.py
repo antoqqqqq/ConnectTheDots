@@ -47,7 +47,7 @@ class GameMenu:
         self.text_button_list = []
         self.button_win= []
         self.init_all_buttons()
-        self.selectedAlgorithm = "BFS"
+        self.selectedAlgorithm = "A Star"
 
     def init_all_buttons(self):        
         self.init_all_text_buttons()
@@ -234,7 +234,10 @@ class GameMenu:
                         if self.selectedAlgorithm == "BFS":
                             self.selectedAlgorithm = "UCS"
                         elif self.selectedAlgorithm == "UCS":
+                            self.selectedAlgorithm = "A Star"
+                        elif self.selectedAlgorithm == "A Star":
                             self.selectedAlgorithm = "BFS"
+                        
                                   
             if event.type == pygame.MOUSEBUTTONUP:
                 self.is_connecting_dot = False

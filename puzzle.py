@@ -25,7 +25,7 @@ class Puzzle:
     @staticmethod
     #try all possible moves for a dots pair that aren't connected
     #when a dots pair is connected, set the index of the dots pair in dotsConnectedState to true
-    def getPossibleStates(state, dots_list, dotsConnectedState, size, cost = 0):
+    def getPossibleStates(state, dots_list, dotsConnectedState, size, cost = 0, cost_per_move = 1):
         #get the first index that it equals to False in dotsConnectedState
         #the index is -1 (doesn't chang) if all elements in the list are True
         dotPairIndex = -1
@@ -71,10 +71,10 @@ class Puzzle:
                 new_state[next_pos[0] * size + next_pos[1]].line_color = dotColor
                 if new_state[cur_pos[0] * size + cur_pos[1]].line_enter_direction !=None:
                     if new_state[cur_pos[0] * size + cur_pos[1]].line_enter_direction==new_state[next_pos[0] * size + next_pos[1]].line_enter_direction:
-                        left_cost+=1
+                        left_cost+= cost_per_move
                     else:
-                        left_cost+=2
-                else:left_cost+=1
+                        left_cost+= cost_per_move + 1
+                else:left_cost+= cost_per_move
                 if state[next_pos[0] * size + next_pos[1]].dot != None and state[next_pos[0] * size + next_pos[1]].dot.color == dotColor:
                     newDotsConnedtedState[dotPairIndex] = True
 
@@ -101,10 +101,10 @@ class Puzzle:
                 new_state[next_pos[0] * size + next_pos[1]].line_color = dotColor
                 if new_state[cur_pos[0] * size + cur_pos[1]].line_enter_direction !=None:
                     if new_state[cur_pos[0] * size + cur_pos[1]].line_enter_direction==new_state[next_pos[0] * size + next_pos[1]].line_enter_direction:
-                        right_cost +=1
+                        right_cost += cost_per_move
                     else:
-                        right_cost +=2
-                else:right_cost +=1
+                        right_cost += cost_per_move + 1
+                else:right_cost += cost_per_move
 
                 if state[next_pos[0] * size + next_pos[1]].dot != None and state[next_pos[0] * size + next_pos[1]].dot.color == dotColor:
                     newDotsConnedtedState[dotPairIndex] = True
@@ -132,10 +132,10 @@ class Puzzle:
                 new_state[next_pos[0] * size + next_pos[1]].line_color = dotColor
                 if new_state[cur_pos[0] * size + cur_pos[1]].line_enter_direction !=None:
                     if new_state[cur_pos[0] * size + cur_pos[1]].line_enter_direction==new_state[next_pos[0] * size + next_pos[1]].line_enter_direction:
-                        up_cost +=1
+                        up_cost += cost_per_move
                     else:
-                        up_cost +=2
-                else:up_cost +=1
+                        up_cost += cost_per_move + 1
+                else:up_cost += cost_per_move
                 if state[next_pos[0] * size + next_pos[1]].dot != None and state[next_pos[0] * size + next_pos[1]].dot.color == dotColor:
                     newDotsConnedtedState[dotPairIndex] = True
 
@@ -162,10 +162,10 @@ class Puzzle:
                 new_state[next_pos[0] * size + next_pos[1]].line_color = dotColor
                 if new_state[cur_pos[0] * size + cur_pos[1]].line_enter_direction !=None:
                     if new_state[cur_pos[0] * size + cur_pos[1]].line_enter_direction==new_state[next_pos[0] * size + next_pos[1]].line_enter_direction:
-                        down_cost +=1
+                        down_cost += cost_per_move
                     else:
-                        down_cost +=2
-                else:down_cost +=1
+                        down_cost += cost_per_move + 1
+                else:down_cost += cost_per_move
                 if state[next_pos[0] * size + next_pos[1]].dot != None and state[next_pos[0] * size + next_pos[1]].dot.color == dotColor:
                         newDotsConnedtedState[dotPairIndex] = True
 
@@ -180,6 +180,8 @@ class Puzzle:
             self.BFS_solve()
         if(self.selectedAlgorithm == 'UCS'):
             self.UCS_solve()
+        if(self.selectedAlgorithm == 'A Star'):
+            self.A_solve()
         
     def BFS_solve(self):
         solver = BFS(self.start_state, self.dots_list, self.size)
@@ -195,7 +197,9 @@ class Puzzle:
         pass
     
     def A_solve(self):
-        pass
+        solver = A_star(self.start_state, self.dots_list, self.size)
+        self.isSolved, self.solution = solver.solve()
+        self.nodesVisted = solver.node_counter
 
 class BFS:
     def __init__(self, start_state, dots_list, size):
@@ -253,10 +257,10 @@ class UCS:
         initial_dots_state = [False for i in range(len(self.dots_list))]
         initial_node = Node(self.start_state, None, initial_dots_state)
         initial_ucsnode= USC_node(0,initial_node)
-        Priority_Queue = PriorityQueue()
-        Priority_Queue.put((0, initial_ucsnode))
-        while Priority_Queue:
-            node = Priority_Queue.get()[1]
+        queue = PriorityQueue()
+        queue.put((0, initial_ucsnode))
+        while queue:
+            node = queue.get()[1]
             self.node_counter += 1
             
             if all(node.dotsConnectedState) == True:
@@ -266,7 +270,7 @@ class UCS:
             for new_state, new_dotsState,new_cost in possible_newStates:
                 new_node = Node(new_state, node, new_dotsState)
                 New_node = USC_node( new_cost,new_node)
-                Priority_Queue.put((new_cost, New_node))
+                queue.put((new_cost, New_node))
 
 class A_star:
     def __init__(self, start_state, dots_list, size):
@@ -303,17 +307,17 @@ class A_star:
         initial_node = Node(self.start_state, None, initial_dots_state)
         initial_Anode= Astar_node(0, 0, initial_node)
         initial_Anode.h_score = self.get_heuristic(initial_Anode)
-        Priority_Queue = PriorityQueue()
-        Priority_Queue.put((0, initial_Anode))
-        while Priority_Queue:
-            node = Priority_Queue.get()[1]
+        queue = PriorityQueue()
+        queue.put((0, initial_Anode))
+        while queue:
+            node = queue.get()[1]
             self.node_counter += 1
             
             if all(node.dotsConnectedState) == True:
                 self.trace_back_solution(node)
                 return True, self.solution
-            possible_newStates = Puzzle.getPossibleStates(node.state, self.dots_list, node.dotsConnectedState, self.size, int(node.cost))
-            for new_state, new_dotsState,new_cost in possible_newStates:
+            possible_newStates = Puzzle.getPossibleStates(node.state, self.dots_list, node.dotsConnectedState, self.size, node.cost)
+            for new_state, new_dotsState, new_cost in possible_newStates:
                 new_node = Node(new_state, node, new_dotsState)
-                New_node = Astar_node(new_cost,new_node)
-                Priority_Queue.put((new_cost, New_node))
+                New_node = Astar_node(new_cost, self.get_heuristic(new_node), new_node)
+                queue.put((New_node.cost + New_node.h_score, New_node))
