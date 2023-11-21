@@ -42,7 +42,9 @@ class GameMenu:
         pygame.init()
         #screen to draw 
         self.screen = pygame.display.set_mode((self.width, self.height))
-        pygame.display.set_caption("Connect the Dots  - Group 1")
+        pygame.display.set_caption("Connect the Dots - Group 1")
+        game_icon = pygame.image.load("resources/images/game-logo.png").convert_alpha()
+        pygame.display.set_icon(game_icon)
         self.clock = pygame.time.Clock()
         self.init_all_sprites()
         self.button_list = []
@@ -50,7 +52,7 @@ class GameMenu:
         self.button_win= []
         self.button_unsolvable = []
         self.init_all_buttons()
-        self.selectedAlgorithm = "A Star"
+        self.selectedAlgorithm = "BFS"
 
     def init_all_buttons(self):        
         self.init_all_text_buttons()
@@ -251,6 +253,8 @@ class GameMenu:
                         elif self.selectedAlgorithm == "UCS":
                             self.selectedAlgorithm = "A Star"
                         elif self.selectedAlgorithm == "A Star":
+                            self.selectedAlgorithm = "Hill Climbing"
+                        elif self.selectedAlgorithm == "Hill Climbing":
                             self.selectedAlgorithm = "BFS"
                         
                                   
@@ -539,6 +543,8 @@ class StageMenu:
         #screen to draw 
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption("Connect the Dots - Group 1")
+        game_icon = pygame.image.load("resources/images/game-logo.png").convert_alpha()
+        pygame.display.set_icon(game_icon)
         self.clock = pygame.time.Clock()
 
         # self.init_all_sprites()
@@ -699,6 +705,8 @@ class HomeMenu:
         #screen to draw 
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.display.set_caption("Connect the Dots - Group 1")
+        game_icon = pygame.image.load("resources/images/game-logo.png").convert_alpha()
+        pygame.display.set_icon(game_icon)
         self.clock = pygame.time.Clock()
 
         # self.init_all_sprites()
