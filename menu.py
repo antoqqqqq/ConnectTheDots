@@ -52,7 +52,7 @@ class GameMenu:
         self.button_win= []
         self.button_unsolvable = []
         self.init_all_buttons()
-        self.selectedAlgorithm = "A Star"
+        self.selectedAlgorithm = "BFS"
 
     def init_all_buttons(self):        
         self.init_all_text_buttons()
@@ -253,6 +253,8 @@ class GameMenu:
                         elif self.selectedAlgorithm == "UCS":
                             self.selectedAlgorithm = "A Star"
                         elif self.selectedAlgorithm == "A Star":
+                            self.selectedAlgorithm = "Hill Climbing"
+                        elif self.selectedAlgorithm == "Hill Climbing":
                             self.selectedAlgorithm = "BFS"
                         
                                   
