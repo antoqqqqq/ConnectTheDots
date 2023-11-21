@@ -45,8 +45,12 @@ class Astar_node:
             return True
         return False
 
-    
-
+class hill_node:
+    def __init__(self, h_score, node):
+        self.state = node.state
+        self.parent = node.parent
+        self.dotsConnectedState = node.dotsConnectedState   
+        self.h_score = h_score
                 
 
     

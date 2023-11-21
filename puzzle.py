@@ -184,6 +184,8 @@ class Puzzle:
             self.UCS_solve()
         if(self.selectedAlgorithm == 'A Star'):
             self.A_solve()
+        if(self.selectedAlgorithm == "Hill Climbing"):
+            self.HillClimbing_solve()
         
     def BFS_solve(self):
         solver = BFS(self.start_state, self.dots_list, self.size)
@@ -196,7 +198,9 @@ class Puzzle:
         self.nodesVisted = solver.node_counter
 
     def HillClimbing_solve(self):
-        pass
+        solver = Hill_Climbing(self.start_state, self.dots_list, self.size)
+        self.isSolved, self.solution = solver.solve()
+        self.nodesVisted = solver.node_counter
     
     def A_solve(self):
         solver = A_star(self.start_state, self.dots_list, self.size)
@@ -301,6 +305,10 @@ class A_star:
             #get the pos of the first Dot and the second Dot
             cur_pos = [pos for pos in dots[0]]
             goal_pos = [pos for pos in dots[1]]
+            if (node.state[cur_pos[0] * self.size + cur_pos[1]].line_exit_direction == None):
+                cur_pos = [pos for pos in dots[1]]
+                goal_pos = [pos for pos in dots[0]]
+
             while node.state[cur_pos[0] * self.size + cur_pos[1]].line_exit_direction != None:
                 row_offset, col_offset =  DirectionUtil.getMoveValue(node.state[cur_pos[0] * self.size + cur_pos[1]].line_exit_direction)
                 cur_pos[0] += row_offset
@@ -329,5 +337,73 @@ class A_star:
                 new_node = Node(new_state, node, new_dotsState)
                 New_node = Astar_node(new_cost, self.get_heuristic(new_node), new_node)
                 queue.put((New_node.cost + New_node.h_score, New_node))
+
+        return False, self.solution
+
+class Hill_Climbing:
+    def __init__(self, start_state, dots_list, size):
+        self.start_state = start_state
+        self.dots_list = dots_list
+        self.size = size
+        self.solution = list()
+        self.node_counter = 0 
+
+    def trace_back_solution(self, node: Node):
+        if node is None:
+            return
+        self.trace_back_solution(node.parent)
+        if node.state is not None:
+            self.solution.append(node.state)
+
+    def get_heuristic(self, node: Node):
+        h = 0
+        for dots in self.dots_list:
+            #get the pos of the first Dot and the second Dot
+            cur_pos = [pos for pos in dots[0]]
+            goal_pos = [pos for pos in dots[1]]
+            if (node.state[cur_pos[0] * self.size + cur_pos[1]].line_exit_direction == None):
+                cur_pos = [pos for pos in dots[1]]
+                goal_pos = [pos for pos in dots[0]]
+
+            while node.state[cur_pos[0] * self.size + cur_pos[1]].line_exit_direction != None:
+                row_offset, col_offset =  DirectionUtil.getMoveValue(node.state[cur_pos[0] * self.size + cur_pos[1]].line_exit_direction)
+                cur_pos[0] += row_offset
+                cur_pos[1] += col_offset
+
+            h -= abs(goal_pos[0] - cur_pos[0]) + abs(goal_pos[1] - cur_pos[1])
+        return h
+    
+    def solve(self):
+        #create a starting node
+        initial_dots_state = [False for i in range(len(self.dots_list))]
+        initial_node = Node(self.start_state, None, initial_dots_state)
+        node = hill_node(self.get_heuristic(initial_node), initial_node)
+
+        while True:
+            self.node_counter += 1
+            
+            if all(node.dotsConnectedState) == True:
+                self.trace_back_solution(node)
+                return True, self.solution
+            
+            possible_newStates = Puzzle.getPossibleStates(node.state, self.dots_list, node.dotsConnectedState, self.size)
+            new_states = []
+            for new_state, new_dotsState, new_cost in possible_newStates:
+                new_node = Node(new_state, node, new_dotsState)
+                new_HillNode = hill_node(self.get_heuristic(new_node), new_node)
+                new_states.append(new_HillNode)
+            
+            #get the node with the highest h_score
+            if len(new_states) > 0:
+                max_hill_node = max(new_states, key=lambda x: x.h_score)
+                #if new node's h_score is higher than current node
+                #we continue searching with new node
+                #else -> no solution
+                if(max_hill_node.h_score > node.h_score):
+                    node = max_hill_node
+                else:
+                    break
+            else:
+                break
 
         return False, self.solution
