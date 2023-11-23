@@ -534,7 +534,7 @@ class GameMenu:
             TextButton(450, 200, 250, 0, str(self.cur_num_time), font_size=40, color=(255, 144, 194)).draw(self.screen)
 
             if(self.puzzle_solver.isSolved):
-                TextButton(450, 250, 250, 0, "Nodes Visted", font_size=40, color=(255, 144, 194)).draw(self.screen)
+                TextButton(450, 250, 250, 0, "Nodes Visited", font_size=40, color=(255, 144, 194)).draw(self.screen)
                 TextButton(450, 300, 250, 0, str(self.puzzle_solver.nodesVisted), font_size=40, color=(255, 144, 194)).draw(self.screen)
 
             for button in self.button_win:
