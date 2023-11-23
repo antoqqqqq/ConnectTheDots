@@ -27,8 +27,12 @@ class GameMenu:
         self.cur_num_time = 0
         self.AI_high_score = readfile('resources\AI-score\level'+str(self.stage_number)+'.txt')
         self.go_to_next_stage = False
+        self.move_show=0
+        self.turn_show=0
+        self.time_show=0
 
         #variables for processing user mouse inputs on board 
+        self.Show_score='Normal'
         self.Algorithm_saved = False
         self.Algorithm_solved = False
         self.startSolver = False
@@ -82,16 +86,57 @@ class GameMenu:
         TextButton(39, 238 + 165, 103, 0, str(self.cur_num_turn), font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
         TextButton(39, 238 + 190, 103, 0, "Time", font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
         TextButton(39, 238 + 210, 103, 0, str(self.cur_num_time), font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
-
+        if self.Show_score == "Normal":
+            self.a=0
+            self.Name_show="Best"
+            self.move_show=self.best_num_moves
+            self.turn_show= self.best_num_turn
+            self.time_show=self.best_num_time
+        elif self.Show_score == "BFS":
+            self.a=25
+            self.Name_show=self.Show_score
+            self.move_show=self.AI_high_score[0][0]
+            self.turn_show= self.AI_high_score[0][1]
+            self.time_show=self.AI_high_score[0][2]
+            self.node_visited=self.AI_high_score[0][3]
+        elif self.Show_score == "UCS":
+            self.Name_show=self.Show_score
+            self.move_show=self.AI_high_score[1][0]
+            self.turn_show= self.AI_high_score[1][1]
+            self.time_show=self.AI_high_score[1][2]
+            self.node_visited=self.AI_high_score[1][3]
+        elif self.Show_score == "A Star":
+            self.Name_show=self.Show_score
+            self.move_show=self.AI_high_score[2][0]
+            self.turn_show= self.AI_high_score[2][1]
+            self.time_show=self.AI_high_score[2][2]
+            self.node_visited=self.AI_high_score[2][3]
+        elif self.Show_score == "Hill Climbing":
+            self.Name_show=self.Show_score
+            self.move_show=self.AI_high_score[3][0]
+            self.turn_show= self.AI_high_score[3][1]
+            self.time_show=self.AI_high_score[3][2]
+            self.node_visited=self.AI_high_score[3][3]
+        elif self.Show_score == "DFS":
+            self.Name_show=self.Show_score
+            self.move_show=self.AI_high_score[4][0]
+            self.turn_show= self.AI_high_score[4][1]
+            self.time_show=self.AI_high_score[4][2]
+            self.node_visited=self.AI_high_score[4][3]
         TextButton(175, 238 + 40, 103, 189, "", font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255)).draw(self.screen)
-        TextButton(175, 238 + 65, 103, 0, "Best", font_size = 27,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(25, 38, 85)).draw(self.screen)
-        TextButton(175, 238 + 100, 103, 0, "Move", font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
-        TextButton(175, 238 + 120, 103, 0, str(self.best_num_moves), font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
-        TextButton(175, 238 + 145, 103, 0, "Turns", font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
-        TextButton(175, 238 + 165, 103, 0, str(self.best_num_turn), font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
-        TextButton(175, 238 + 190, 103, 0, "Time", font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
-        TextButton(175, 238 + 210, 103, 0, str(self.best_num_time), font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
+        TextButton(175, 238 + 65, 103, 0, self.Name_show, font_size = 27,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(25, 38, 85)).draw(self.screen)
+        TextButton(175-self.a, 238 + 100, 103, 0, "Move", font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
+        TextButton(175-self.a, 238 + 120, 103, 0, str(self.move_show), font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
+        TextButton(175-self.a, 238 + 145, 103, 0, "Turns", font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
+        TextButton(175-self.a, 238 + 165, 103, 0, str(self.turn_show), font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
+        TextButton(175+self.a, 238 + 190 -self.a*9*2/5, 103, 0, "Time", font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
+        TextButton(175+self.a, 238 + 210 -self.a*9*2/5, 103, 0, str(self.time_show), font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
         TextButton(39, 100, 236, 50, "Algorithm: " + self.selectedAlgorithm, font_size = 28,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
+        if self.a !=0:
+            TextButton(175, 238 + 190 , 103, 0, "Node visited",
+                        font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
+            TextButton(175, 238 + 210 , 103, 0, str(self.node_visited), 
+                       font_size = 20,color=(245, 238, 200), hover_color=(255, 255, 255), text_color=(0, 21, 36)).draw(self.screen)
 
         for button in self.text_button_list:
             button.draw(self.screen)
@@ -259,6 +304,20 @@ class GameMenu:
                             self.selectedAlgorithm = "Hill Climbing"
                         elif self.selectedAlgorithm == "Hill Climbing":
                             self.selectedAlgorithm = "BFS"  
+                        write_file_AI('resources\AI-score\level'+str(self.stage_number)+'.txt',self.AI_high_score)
+                    if(text_button.getButtonText() == "Score"):
+                        if self.Show_score == "Normal":
+                            self.Show_score = "BFS"
+                        elif self.Show_score == "BFS":
+                            self.Show_score = "UCS"
+                        elif self.Show_score == "UCS":
+                            self.Show_score = "A Star"
+                        elif self.Show_score == "A Star":
+                            self.Show_score = "Hill Climbing"
+                        elif self.Show_score == "Hill Climbing":
+                            self.Show_score = "DFS"  
+                        elif self.Show_score == "DFS":
+                            self.Show_score = "Normal"
                         
                         
                                   
@@ -446,17 +505,17 @@ class GameMenu:
                 self.AI_high_score[1][1]= self.cur_num_turn
                 self.AI_high_score[1][2]= self.cur_num_time
                 self.AI_high_score[1][3]= self.puzzle_solver.nodesVisted
-            elif self.Algorithm_solved == 'ASTAR':
+            elif self.selectedAlgorithm == 'A Star':
                 self.AI_high_score[2][0]= self.cur_num_moves
                 self.AI_high_score[2][1]= self.cur_num_turn
                 self.AI_high_score[2][2]= self.cur_num_time
                 self.AI_high_score[2][3]= self.puzzle_solver.nodesVisted
-            elif self.Algorithm_solved == 'Hill Climbing':
+            elif self.selectedAlgorithm == 'Hill Climbing':
                 self.AI_high_score[3][0]= self.cur_num_moves
                 self.AI_high_score[3][1]= self.cur_num_turn
                 self.AI_high_score[3][2]= self.cur_num_time
                 self.AI_high_score[3][3]= self.puzzle_solver.nodesVisted
-            elif self.Algorithm_solved == 'DFS':
+            elif self.selectedAlgorithm == 'DFS':
                 self.AI_high_score[4][0]= self.cur_num_moves
                 self.AI_high_score[4][1]= self.cur_num_turn
                 self.AI_high_score[4][2]= self.cur_num_time

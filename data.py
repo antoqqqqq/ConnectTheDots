@@ -33,6 +33,13 @@ def write_file(filename,text):
                 f.write(row[0]+'-'+row[1]+'-'+row[2]+'-'+row[3]+'\n')
     except IOError:
         print("Error: could not write file " + filename)
+def write_file_AI(filename,data=[]):
+    try:
+        with open(filename, 'w') as f:
+            for row in data:
+                f.write(str(row[0])+'-'+str(row[1])+'-'+str(row[2])+'-'+str(row[3])+'\n')
+    except IOError:
+        print("Error: could not write file " + filename)
 def read_stage( file_path):
     try:
         with open( file_path, 'r') as f:
