@@ -180,6 +180,8 @@ class Puzzle:
     def solve(self):
         if(self.selectedAlgorithm == 'BFS'):
             self.BFS_solve()
+        if(self.selectedAlgorithm == 'DFS'):
+            self.DFS_solve()
         if(self.selectedAlgorithm == 'UCS'):
             self.UCS_solve()
         if(self.selectedAlgorithm == 'A Star'):
@@ -189,6 +191,11 @@ class Puzzle:
         
     def BFS_solve(self):
         solver = BFS(self.start_state, self.dots_list, self.size)
+        self.isSolved, self.solution = solver.solve()
+        self.nodesVisted = solver.node_counter
+
+    def DFS_solve(self):
+        solver = DFS(self.start_state, self.dots_list, self.size)
         self.isSolved, self.solution = solver.solve()
         self.nodesVisted = solver.node_counter
 
@@ -247,6 +254,46 @@ class BFS:
         
         return False, self.solution
 
+class DFS:
+    def __init__(self, start_state, dots_list, size):
+        self.start_state = start_state
+        self.dots_list = dots_list
+        self.size = size
+        self.solution = list()
+        self.node_counter = 0
+
+    def trace_back_solution(self, node: Node):
+        if node is None:
+            return
+        self.trace_back_solution(node.parent)
+        if node.state is not None:
+            self.solution.append(node.state)
+
+    def solve(self):
+        #insert the root node in queue
+        initial_dots_state = [False for i in range(len(self.dots_list))]
+        initial_node = Node(self.start_state, None, initial_dots_state)
+        queue = deque()
+        queue.append(initial_node)
+
+        while queue:
+            #get the most recent added node (FILO)
+            current_node = queue.pop()
+            self.node_counter += 1
+
+            #check if all dots are connected - game is cleared
+            if all(current_node.dotsConnectedState) == True:
+                self.trace_back_solution(current_node)
+                return True, self.solution
+            
+            #generate leaf childs
+            possible_newStates = Puzzle.getPossibleStates(current_node.state, self.dots_list, current_node.dotsConnectedState, self.size)
+            for new_state, new_dotsState, cost in possible_newStates:
+                new_node = Node(new_state, current_node, new_dotsState)
+                queue.append(new_node)
+        
+        return False, self.solution
+    
 class UCS:
     def __init__(self, start_state, dots_list, size):
         self.start_state = start_state

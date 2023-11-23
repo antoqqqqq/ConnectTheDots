@@ -252,6 +252,8 @@ class GameMenu:
                         self.playing = False
                     if(text_button.getButtonText() == "Change"):
                         if self.selectedAlgorithm == "BFS":
+                            self.selectedAlgorithm = "DFS"
+                        elif self.selectedAlgorithm == "DFS":
                             self.selectedAlgorithm = "UCS"
                         elif self.selectedAlgorithm == "UCS":
                             self.selectedAlgorithm = "A Star"
