@@ -260,7 +260,7 @@ class GameMenu:
                         elif self.selectedAlgorithm == "A Star":
                             self.selectedAlgorithm = "Hill Climbing"
                         elif self.selectedAlgorithm == "Hill Climbing":
-                            self.selectedAlgorithm = "BFS"
+                            self.selectedAlgorithm = "BFS"  
                         
                         
                                   
@@ -680,16 +680,16 @@ class StageMenu:
                         gameMenu = GameMenu(0, 11)
                         gameMenu.run()
                     if(button.getButtonText() == "Level 12"):
-                        gameMenu = GameMenu(0, 11)
+                        gameMenu = GameMenu(0, 12)
                         gameMenu.run()
                     if(button.getButtonText() == "Level 13"):
-                        gameMenu = GameMenu(0, 11)
+                        gameMenu = GameMenu(0, 13)
                         gameMenu.run()
                     if(button.getButtonText() == "Level 14"):
-                        gameMenu = GameMenu(0, 11)
+                        gameMenu = GameMenu(0, 14)
                         gameMenu.run()
                     if(button.getButtonText() == "Level 15"):
-                        gameMenu = GameMenu(0, 11)
+                        gameMenu = GameMenu(0, 15)
                         gameMenu.run()
 
     def update(self):
