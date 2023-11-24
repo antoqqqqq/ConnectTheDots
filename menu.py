@@ -25,10 +25,11 @@ class GameMenu:
         self.cur_num_moves = 0
         self.cur_num_turn  = 0
         self.cur_num_time = 0
-
+        self.AI_high_score = readfile('resources\AI-score\level'+str(self.stage_number)+'.txt')
         self.go_to_next_stage = False
 
         #variables for processing user mouse inputs on board 
+        self.Algorithm_saved = False
         self.Algorithm_solved = False
         self.startSolver = False
         self.is_connecting_dot = False
@@ -61,7 +62,8 @@ class GameMenu:
         self.text_button_list.append(TextButton(175, 31, 100, 80 - 30, "Solve", font_size = 28,color=(245, 238, 200), hover_color=(0, 21, 36), text_color=(0, 21, 36)))
         self.text_button_list.append(TextButton(39, 31, 100, 80 - 30, "Change", font_size = 28,color=(245, 238, 200), hover_color=(0, 21, 36), text_color=(0, 21, 36)))
         self.text_button_list.append(TextButton(39, 461 + 40, 100, 80, "Home", font_size = 35,color=(245, 238, 200), hover_color=(0, 21, 36), text_color=(0, 21, 36)))
-        self.text_button_list.append(TextButton(175, 461 + 40, 100, 80, "Reset", font_size = 35,color=(245, 238, 200), hover_color=(0, 21, 36), text_color=(0, 21, 36)))
+        self.text_button_list.append(TextButton(175, 461 + 40, 100, 40, "Reset", font_size = 25,color=(245, 238, 200), hover_color=(0, 21, 36), text_color=(0, 21, 36)))
+        self.text_button_list.append(TextButton(175, 461 + 40*2, 100, 40, "Score", font_size = 25,color=(245, 238, 200), hover_color=(0, 21, 36), text_color=(0, 21, 36)))
 
     def drawInitalMenu(self):
         self.draw()
@@ -236,12 +238,13 @@ class GameMenu:
                         continue
 
                     if text_button.getButtonText() == "Solve" and self.gameClear == False:
-                        self.Algorithm_solved = True
                         self.updateTimer = False
                         self.puzzle_solver.selectedAlgorithm = self.selectedAlgorithm
                         self.startAlgorithmTime = time.time()
                         self.puzzle_solver.solve()
                         self.startSolver = True
+                        self.Algorithm_saved= False
+
 
                     if(text_button.getButtonText() == "Reset"):
                         self.resetGame()
@@ -249,13 +252,16 @@ class GameMenu:
                         self.playing = False
                     if(text_button.getButtonText() == "Change"):
                         if self.selectedAlgorithm == "BFS":
+                            self.selectedAlgorithm = "DFS"
+                        elif self.selectedAlgorithm == "DFS":
                             self.selectedAlgorithm = "UCS"
                         elif self.selectedAlgorithm == "UCS":
                             self.selectedAlgorithm = "A Star"
                         elif self.selectedAlgorithm == "A Star":
                             self.selectedAlgorithm = "Hill Climbing"
                         elif self.selectedAlgorithm == "Hill Climbing":
-                            self.selectedAlgorithm = "BFS"
+                            self.selectedAlgorithm = "BFS"  
+                        
                         
                                   
             if event.type == pygame.MOUSEBUTTONUP:
@@ -431,6 +437,33 @@ class GameMenu:
                 elif self.cur_num_moves == int(self.best_num_moves):
                     if self.cur_num_time < float(self.best_num_time):
                         write_file('resources/score/level'+str(self.stage_number)+'.txt', str(self.stage_number)+'-'+str(self.cur_num_moves)+'-'+str(self.cur_num_turn)+'-'+str(self.cur_num_time))
+        if self.puzzle_solver.isSolved==True and self.gameClear == True and self.Algorithm_saved==False:
+            if self.selectedAlgorithm == 'BFS':
+                self.AI_high_score[0][0]= self.cur_num_moves
+                self.AI_high_score[0][1]= self.cur_num_turn
+                self.AI_high_score[0][2]= self.cur_num_time
+                self.AI_high_score[0][3]= self.puzzle_solver.nodesVisted
+            elif self.selectedAlgorithm == 'UCS':
+                self.AI_high_score[1][0]= self.cur_num_moves
+                self.AI_high_score[1][1]= self.cur_num_turn
+                self.AI_high_score[1][2]= self.cur_num_time
+                self.AI_high_score[1][3]= self.puzzle_solver.nodesVisted
+            elif self.Algorithm_solved == 'ASTAR':
+                self.AI_high_score[2][0]= self.cur_num_moves
+                self.AI_high_score[2][1]= self.cur_num_turn
+                self.AI_high_score[2][2]= self.cur_num_time
+                self.AI_high_score[2][3]= self.puzzle_solver.nodesVisted
+            elif self.Algorithm_solved == 'Hill Climbing':
+                self.AI_high_score[3][0]= self.cur_num_moves
+                self.AI_high_score[3][1]= self.cur_num_turn
+                self.AI_high_score[3][2]= self.cur_num_time
+                self.AI_high_score[3][3]= self.puzzle_solver.nodesVisted
+            elif self.Algorithm_solved == 'DFS':
+                self.AI_high_score[4][0]= self.cur_num_moves
+                self.AI_high_score[4][1]= self.cur_num_turn
+                self.AI_high_score[4][2]= self.cur_num_time
+                self.AI_high_score[4][3]= self.puzzle_solver.nodesVisted
+            self.Algorithm_saved = True
         
     def draw_board(self):
         x_start, y_start = self.board_topLeft[0], self.board_topLeft[1]
@@ -503,7 +536,7 @@ class GameMenu:
             TextButton(450, 200, 250, 0, str(self.cur_num_time), font_size=40, color=(255, 144, 194)).draw(self.screen)
 
             if(self.puzzle_solver.isSolved):
-                TextButton(450, 250, 250, 0, "Nodes Visted", font_size=40, color=(255, 144, 194)).draw(self.screen)
+                TextButton(450, 250, 250, 0, "Nodes Visited", font_size=40, color=(255, 144, 194)).draw(self.screen)
                 TextButton(450, 300, 250, 0, str(self.puzzle_solver.nodesVisted), font_size=40, color=(255, 144, 194)).draw(self.screen)
 
             for button in self.button_win:
@@ -647,16 +680,16 @@ class StageMenu:
                         gameMenu = GameMenu(0, 11)
                         gameMenu.run()
                     if(button.getButtonText() == "Level 12"):
-                        gameMenu = GameMenu(0, 11)
+                        gameMenu = GameMenu(0, 12)
                         gameMenu.run()
                     if(button.getButtonText() == "Level 13"):
-                        gameMenu = GameMenu(0, 11)
+                        gameMenu = GameMenu(0, 13)
                         gameMenu.run()
                     if(button.getButtonText() == "Level 14"):
-                        gameMenu = GameMenu(0, 11)
+                        gameMenu = GameMenu(0, 14)
                         gameMenu.run()
                     if(button.getButtonText() == "Level 15"):
-                        gameMenu = GameMenu(0, 11)
+                        gameMenu = GameMenu(0, 15)
                         gameMenu.run()
 
     def update(self):
